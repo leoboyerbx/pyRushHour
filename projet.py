@@ -142,6 +142,7 @@ def init_jeu():
 
     global jeu
     global memoire
+    global liste_vehicules
     ##------- Tableau de mémoire -------##
     memoire = []
     for ligne in range(1,7):
@@ -150,8 +151,9 @@ def init_jeu():
             transit.append(0)
         memoire.append(transit)       # Ajout de la ligne à la liste principale
 
-    # Vidage du plateau
+    # Vidage du plateau et des voitures
     jeu.delete("all")
+    liste_vehicules = []
     ##------- Création du plateau -------##
     jeu.create_rectangle(1, 1, 600, 600)
     for k in range(5):
@@ -165,51 +167,52 @@ def ouvrir_niveau():
 
     ##------- Lecture du Fichier -------##
     ##----- Ouverture du fichier en lecture seule -----##
-    chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))
-    if not(chemin_niveau):
-        chemin_niveau = 'niveaux/niv1.rhl'
-    fichier_niveau = open(chemin_niveau, 'r')
+    chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))  # Dialogue qui ouvre un choix de fichier
+    if chemin_niveau: #Si un fichier est choisi
+        #On vide le plateau de jeu -> réinitialisation
+        init_jeu()
+        fichier_niveau = open(chemin_niveau, 'r')
 
-    ##----- Lecture des voitures -----##
-    numVoiture = 0
-    for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
-        if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
-            if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
-                voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
-                try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
-                    indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
-                    indexY = ligne.index("y=")
-                    indexLong = ligne.index("longueur=")
-                    indexS = ligne.index("sens=")
-                    voitureX = int(ligne[indexX+2])
-                    voitureY = int(ligne[indexY+2])
-                    voitureLongueur = int(ligne[indexLong+9])
-                    s = ligne[indexS+5]
-                except: # Signelement des erreurs à l'utilisateur
-                    print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
-                    print("{}  - Instruction erronnée".format(ligne))
-                if s == "h":    # On définit le sens
-                    voitureSens = 0
-                else:
-                    voitureSens = 1
+        ##----- Lecture des voitures -----##
+        numVoiture = 0
+        for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
+            if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
+                if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
+                    voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
+                    try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
+                        indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
+                        indexY = ligne.index("y=")
+                        indexLong = ligne.index("longueur=")
+                        indexS = ligne.index("sens=")
+                        voitureX = int(ligne[indexX+2])
+                        voitureY = int(ligne[indexY+2])
+                        voitureLongueur = int(ligne[indexLong+9])
+                        s = ligne[indexS+5]
+                    except: # Signelement des erreurs à l'utilisateur
+                        print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
+                        print("{}  - Instruction erronnée".format(ligne))
+                    if s == "h":    # On définit le sens
+                        voitureSens = 0
+                    else:
+                        voitureSens = 1
 
-                voitureCouleur = "#000" #Couleur noire par défaut
-                voitureValeur = 2 #Valeur de voiture par défaut
-                if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
-                    voitureCouleur = "#f00"
-                    nomVoiture = "VoitureR"
-                    voitureValeur = 1
-                else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
-                    voitureCouleur = couleurAleat()
-                    voitureValeur = 2
-                    numVoiture += 1
-                    nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
-                
-                exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+                    voitureCouleur = "#000" #Couleur noire par défaut
+                    voitureValeur = 2 #Valeur de voiture par défaut
+                    if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
+                        voitureCouleur = "#f00"
+                        nomVoiture = "VoitureR"
+                        voitureValeur = 1
+                    else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
+                        voitureCouleur = couleurAleat()
+                        voitureValeur = 2
+                        numVoiture += 1
+                        nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
+                    
+                    exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
 
 
-    ##----- Fermeture du fichier précédendemment ouvert -----##
-    fichier_niveau.close()
+        ##----- Fermeture du fichier précédendemment ouvert -----##
+        fichier_niveau.close()
 
 
 def Clic(event):
@@ -325,6 +328,16 @@ fen = Tk()
 fen.title('Rush Hour')                # ---> On donne un titre à la fenêtre
 # ---> La fenêtre fait 400*400px, et est située à 200px de la gauche de l'écran, à 100px du haut
 fen.geometry('800x700+200+100')
+
+##-------- Création de labarre de menu ---------##
+barre_menu = Menu(fen)
+menu_fichier = Menu(barre_menu, tearoff=0)
+menu_fichier.add_command(label="Ouvrir un niveau", command=ouvrir_niveau)
+menu_fichier.add_separator()
+menu_fichier.add_command(label="Quitter", command=fen.quit)
+barre_menu.add_cascade(label="Fichier", menu=menu_fichier)
+
+fen.config(menu=barre_menu)
 
 ##-------- Création des zones de texte ---------##
 bienvenue = Label(
