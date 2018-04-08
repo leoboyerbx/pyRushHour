@@ -276,6 +276,34 @@ quitter.pack()
 debug = Button(fen, text='debug', command=debugger)
 debug.pack()
 
+
+
+##------- Lecture du Fichier -------##
+
+##----- Ouverture du fichier en lecture seule -----##
+fichier_niveau = open('niveaux/niv1.rhl', 'r')
+
+##----- Affichage de toutes mes lignes -----##
+for ligne in fichier_niveau:
+    if ligne[0] != "#":
+        print(ligne)
+    if ligne[0:7] == "voiture":
+        index = ligne.index('(')
+        x = int(ligne[index+1])
+        y = int(ligne[index+3])
+        l = int(ligne[index+5])
+        s = ligne[index+7]
+        if s == "h":
+            sens = 0
+        else:
+            sens = 1
+        print(x,y,l,sens)
+
+##----- Fermeture du fichier précédendemment ouvert -----##
+fichier_niveau.close()
+
+
+
 ##------- Création des voitures -------##
 
 voitureR = Voiture(1, 2, 2, 0, "red", 1)
