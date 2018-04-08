@@ -226,7 +226,11 @@ def verif_gagnant():
         ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
         ok.pack()
 
-def debugger(): # Fonction de débogage
+def couleurAleat(): #Fonction qui génère une couleur aléatoire
+    couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
+    return couleurs[randint(0, len(couleurs) - 1)]  #On retourne une couleur au hasard dans la liste
+
+def debugger(): #Débogage
     for i in range (6):
         print(memoire[i])
 
@@ -277,19 +281,55 @@ quitter.pack()
 debug = Button(fen, text='debug', command=debugger)
 debug.pack()
 
-##------- Création des voitures -------##
-
-voitureR = Voiture(1, 2, 2, 0, "red", 1)
-voiture1 = Voiture(0,0,2,0, "green", 2)
-voiture2 = Voiture(0,1,3,1, "violet", 2)
-voiture3 = Voiture(0,4,2,1, "orange", 2)
-voiture2 = Voiture(3,1,3,1, "blue", 2)
-voiture2 = Voiture(4,4,2,0, "cyan", 2)
-voiture2 = Voiture(2,5,3,0, "green", 2)
-voiture2 = Voiture(5,0,3,1, "yellow", 2)
 
 
-##------- Création des camions -------##
+##------- Lecture du Fichier -------##
+
+##----- Ouverture du fichier en lecture seule -----##
+fichier_niveau = open('niveaux/niv1.rhl', 'r')
+
+##----- Lecture des voitures -----##
+numVoiture = 0
+for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
+    if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
+        if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
+            voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
+            try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
+                indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
+                indexY = ligne.index("y=")
+                indexLong = ligne.index("longueur=")
+                indexS = ligne.index("sens=")
+                voitureX = int(ligne[indexX+2])
+                voitureY = int(ligne[indexY+2])
+                voitureLongueur = int(ligne[indexLong+9])
+                s = ligne[indexS+5]
+            except: # Signelement des erreurs à l'utilisateur
+                print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
+                print("{}  - Instruction erronnée".format(ligne))
+            if s == "h":    # On définit le sens
+                voitureSens = 0
+            else:
+                voitureSens = 1
+
+            voitureCouleur = "#000" #Couleur noire par défaut
+            voitureValeur = 2 #Valeur de voiture par défaut
+            if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
+                voitureCouleur = "#f00"
+                nomVoiture = "VoitureR"
+                voitureValeur = 1
+            else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
+                voitureCouleur = couleurAleat()
+                voitureValeur = 2
+                numVoiture += 1
+                nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
+            
+            exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+
+
+##----- Fermeture du fichier précédendemment ouvert -----##
+fichier_niveau.close()
+
+
 
 ##------- Programme principal -------##
 
