@@ -160,11 +160,11 @@ def init_jeu():
         n = k+1
         jeu.create_line(n*c, 0, n*c, 600)
         jeu.create_line(0, n*c, 600, n*c)
+    menu_fichier.entryconfig("Fermer le niveau", state='disabled')
 
 
 def ouvrir_niveau():
     """ Fonction qui ouvre un niveau et crée les voitures correspondantes """
-
     ##------- Lecture du Fichier -------##
     ##----- Ouverture du fichier en lecture seule -----##
     chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))  # Dialogue qui ouvre un choix de fichier
@@ -213,6 +213,8 @@ def ouvrir_niveau():
 
         ##----- Fermeture du fichier précédendemment ouvert -----##
         fichier_niveau.close()
+        menu_fichier.entryconfig("Fermer le niveau", state='normal')
+
 
 
 def Clic(event):
@@ -329,10 +331,11 @@ fen.title('Rush Hour')                # ---> On donne un titre à la fenêtre
 # ---> La fenêtre fait 400*400px, et est située à 200px de la gauche de l'écran, à 100px du haut
 fen.geometry('800x700+200+100')
 
-##-------- Création de labarre de menu ---------##
+##-------- Création de la barre de menu ---------##
 barre_menu = Menu(fen)
 menu_fichier = Menu(barre_menu, tearoff=0)
 menu_fichier.add_command(label="Ouvrir un niveau", command=ouvrir_niveau)
+menu_fichier.add_command(label="Fermer le niveau", command=init_jeu, state='disabled')
 menu_fichier.add_separator()
 menu_fichier.add_command(label="Quitter", command=fen.quit)
 barre_menu.add_cascade(label="Fichier", menu=menu_fichier)
