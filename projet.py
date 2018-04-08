@@ -22,6 +22,7 @@
 #
 #
 ##------- Importation des modules --------##
+from tkinter import filedialog
 from tkinter import*
 from random import*
 from math import*
@@ -284,9 +285,11 @@ debug.pack()
 
 
 ##------- Lecture du Fichier -------##
-
 ##----- Ouverture du fichier en lecture seule -----##
-fichier_niveau = open('niveaux/niv1.rhl', 'r')
+chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))
+if not(chemin_niveau):
+    chemin_niveau = 'niveaux/niv1.rhl'
+fichier_niveau = open(chemin_niveau, 'r')
 
 ##----- Lecture des voitures -----##
 numVoiture = 0
