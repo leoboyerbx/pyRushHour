@@ -289,14 +289,22 @@ fichier_niveau = open('niveaux/niv1.rhl', 'r')
 
 ##----- Lecture des voitures -----##
 numVoiture = 0
-for ligne in fichier_niveau:    #--ON parcourt chaque ligne dans le fichier
+for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
     if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
         if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
-            index = ligne.index('(')    #On cherche le début de l'instruction, puis on parcourt les infos écrites dans le fichier
-            voitureX = int(ligne[index+1])
-            voitureY = int(ligne[index+3])
-            voitureLongueur = int(ligne[index+5])
-            s = ligne[index+7]
+            voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
+            try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
+                indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
+                indexY = ligne.index("y=")
+                indexLong = ligne.index("longueur=")
+                indexS = ligne.index("sens=")
+                voitureX = int(ligne[indexX+2])
+                voitureY = int(ligne[indexY+2])
+                voitureLongueur = int(ligne[indexLong+9])
+                s = ligne[indexS+5]
+            except: # Signelement des erreurs à l'utilisateur
+                print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
+                print("{}  - Instruction erronnée".format(ligne))
             if s == "h":    # On définit le sens
                 voitureSens = 0
             else:
@@ -321,8 +329,6 @@ for ligne in fichier_niveau:    #--ON parcourt chaque ligne dans le fichier
 fichier_niveau.close()
 
 
-
-##------- Création des camions -------##
 
 ##------- Programme principal -------##
 
