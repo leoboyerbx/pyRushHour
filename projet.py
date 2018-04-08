@@ -137,6 +137,29 @@ class Voiture:
 
 ##------- Définition des fonctions --------##
 
+def init_jeu():
+    """ Fonction qui initialise le plateau de jeu """
+
+    global jeu
+    global memoire
+    ##------- Tableau de mémoire -------##
+    memoire = []
+    for ligne in range(1,7):
+        transit = []                  # Les cases de chaque ligne seront stockées dans "transit"
+        for colonne in range(6):      # Conception des cases d'une ligne
+            transit.append(0)
+        memoire.append(transit)       # Ajout de la ligne à la liste principale
+
+    # Vidage du plateau
+    jeu.delete("all")
+    ##------- Création du plateau -------##
+    jeu.create_rectangle(1, 1, 600, 600)
+    for k in range(5):
+        n = k+1
+        jeu.create_line(n*c, 0, n*c, 600)
+        jeu.create_line(0, n*c, 600, n*c)
+
+
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -245,14 +268,6 @@ Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
 
-##------- Tableau de mémoire -------##
-memoire = []
-for ligne in range(1,7):
-    transit = []                  # Les cases de chaque ligne seront stockées dans "transit"
-    for colonne in range(6):      # Conception des cases d'une ligne
-        transit.append(0)
-    memoire.append(transit)       # Ajout de la ligne à la liste principale
-
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
@@ -269,12 +284,7 @@ bienvenue.pack()
 jeu = Canvas(fen, width=700, height=600, bg='#fff')
 jeu.pack()
 
-##------- Création du plateau -------##
-jeu.create_rectangle(1, 1, 600, 600)
-for k in range(5):
-    n = k+1
-    jeu.create_line(n*c, 0, n*c, 600)
-    jeu.create_line(0, n*c, 600, n*c)
+init_jeu()
 
 ##------- Création des boutons -------##
 quitter = Button(fen, text='Quitter', command=fen.quit)
