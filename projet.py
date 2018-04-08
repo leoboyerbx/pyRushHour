@@ -145,79 +145,80 @@ def Clic(event):
     X = event.x     # Coordonnées du clic
     Y = event.y
     for vehicule in liste_vehicules:    # Permet de définir si on a cliqué ou non sur un véhicule
+        """ Pour chaque véhicule on teste si les coordonnées du clic correspondent aux coordonnées du véhicule """
         [xmin, ymin, xmax, ymax] = jeu.coords(vehicule.rectangle)
         xmin = int(xmin)
         xmax = int(xmax)
         ymin = int(ymin)
         ymax = int(ymax)
-        if xmin <= X <= xmax and ymin <= Y <= ymax:
-            clic_objet = True
-            target = vehicule
-            target.start_move()
+        if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
+            clic_objet = True   # On définit le drapeau sur true
+            target = vehicule   # On place le véhicule en question comme cible
+            target.start_move()  # On applique la méthode start_move()
             break
         else:
             clic_objet = False
-            
-    print("Clic sur un objet -> ", clic_objet)
 
 
 def Drag(event):
     """ Gestion de l'événement glisser """
-    X = event.x
+    X = event.x # Récupération des coordonnées du clic
     Y = event.y
-    global Largeur
+    global Largeur      # Récupération des variables globales
     global Hauteur
     global target
 
-    if clic_objet == True:
-        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
+    if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
         xmin = int(xmin)
         xmax = int(xmax)
         ymin = int(ymin)
         ymax = int(ymax)
         deltaX = target.largeur/2
         deltaY = target.hauteur/2
-        [limite_gauche, limite_droite] = target.limites
-        # limite de l'objet dans le canevas de jeu
+        [limite_gauche, limite_droite] = target.limites #On récupère les limites de déplacement de l'objet
 
+
+        # Empêcher l'objet de sortir de ses limites
         if target.sens == 0: #Si horizontal
-
             if X<deltaX + limite_gauche:
                 X=deltaX + limite_gauche
             if X>limite_droite-deltaX:
                 X=limite_droite-deltaX
-            # déplacement de l'objet (drag)
+            # déplacement de l'objet
             jeu.coords(target.rectangle,X-deltaX,ymin,X+deltaX,ymax)
-        else:
+        else:   # Si vertical
             if Y<deltaY + limite_gauche:
                 Y=deltaY + limite_gauche
             if Y>limite_droite-deltaY:
                 Y=limite_droite-deltaY
-            
+            # déplacement de l'objet
             jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
 
 
 def Drop(event):
-    if clic_objet:
-        global target
+    """ Gestion de l'événement déposer (drop) """
+    if clic_objet: #Si on est en train de déplacer un objet
+        global target   # On récupère l'objet cible et ses coordonnées
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
-        if target.sens == 0:
-            xG = round(xmin/c)
-            jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax)
-        else:
+        if target.sens == 0: # Si l'objet est horizontal
+            xG = round(xmin/c) # On arrondit au carré le plus proche
+            jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax) # On déplace l'objet (drop)
+        else: # Si l'objet est vertical, pareil mais sur Y
             yG = round(ymin/c)
             jeu.coords(target.rectangle, xmin, yG*c, xmax, yG*c+target.hauteur)
 
         
-        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
+        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
         print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
         target.set_coords(round(xmin/100), round(ymin/100))
-        verif_gagnant()
+        verif_gagnant() # On regarde si on a gagné
 
 
 def verif_gagnant():
+    """ Fonction qui vérifie si le joueur a gagné """
     global memoire
-    if memoire[2][4] == memoire[2][5] == 1:
+    if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
         fen_victoire = Tk()
         fen_victoire.title('Bravo !')
         bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
@@ -225,7 +226,7 @@ def verif_gagnant():
         ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
         ok.pack()
 
-def debugger():
+def debugger(): # Fonction de débogage
     for i in range (6):
         print(memoire[i])
 
