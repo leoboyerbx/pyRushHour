@@ -160,6 +160,57 @@ def init_jeu():
         jeu.create_line(0, n*c, 600, n*c)
 
 
+def ouvrir_niveau():
+    """ Fonction qui ouvre un niveau et crée les voitures correspondantes """
+
+    ##------- Lecture du Fichier -------##
+    ##----- Ouverture du fichier en lecture seule -----##
+    chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))
+    if not(chemin_niveau):
+        chemin_niveau = 'niveaux/niv1.rhl'
+    fichier_niveau = open(chemin_niveau, 'r')
+
+    ##----- Lecture des voitures -----##
+    numVoiture = 0
+    for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
+        if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
+            if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
+                voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
+                try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
+                    indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
+                    indexY = ligne.index("y=")
+                    indexLong = ligne.index("longueur=")
+                    indexS = ligne.index("sens=")
+                    voitureX = int(ligne[indexX+2])
+                    voitureY = int(ligne[indexY+2])
+                    voitureLongueur = int(ligne[indexLong+9])
+                    s = ligne[indexS+5]
+                except: # Signelement des erreurs à l'utilisateur
+                    print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
+                    print("{}  - Instruction erronnée".format(ligne))
+                if s == "h":    # On définit le sens
+                    voitureSens = 0
+                else:
+                    voitureSens = 1
+
+                voitureCouleur = "#000" #Couleur noire par défaut
+                voitureValeur = 2 #Valeur de voiture par défaut
+                if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
+                    voitureCouleur = "#f00"
+                    nomVoiture = "VoitureR"
+                    voitureValeur = 1
+                else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
+                    voitureCouleur = couleurAleat()
+                    voitureValeur = 2
+                    numVoiture += 1
+                    nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
+                
+                exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+
+
+    ##----- Fermeture du fichier précédendemment ouvert -----##
+    fichier_niveau.close()
+
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -293,56 +344,7 @@ debug = Button(fen, text='debug', command=debugger)
 debug.pack()
 
 
-
-##------- Lecture du Fichier -------##
-##----- Ouverture du fichier en lecture seule -----##
-chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))
-if not(chemin_niveau):
-    chemin_niveau = 'niveaux/niv1.rhl'
-fichier_niveau = open(chemin_niveau, 'r')
-
-##----- Lecture des voitures -----##
-numVoiture = 0
-for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
-    if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
-        if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
-            voitureX = voitureY = voitureLongueur = s = 0 # On initialise les variables à 0
-            try: # Essai et exception pour éviter un erreur de formatage du fichier de niveau
-                indexX = ligne.index("x=")  # On récupère l'index de chaque argument puis sa valeur
-                indexY = ligne.index("y=")
-                indexLong = ligne.index("longueur=")
-                indexS = ligne.index("sens=")
-                voitureX = int(ligne[indexX+2])
-                voitureY = int(ligne[indexY+2])
-                voitureLongueur = int(ligne[indexLong+9])
-                s = ligne[indexS+5]
-            except: # Signelement des erreurs à l'utilisateur
-                print("Erreur de formatage du fichier sur la ligne {}. Impossible de générer la voiture.".format(num_ligne + 1))
-                print("{}  - Instruction erronnée".format(ligne))
-            if s == "h":    # On définit le sens
-                voitureSens = 0
-            else:
-                voitureSens = 1
-
-            voitureCouleur = "#000" #Couleur noire par défaut
-            voitureValeur = 2 #Valeur de voiture par défaut
-            if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
-                voitureCouleur = "#f00"
-                nomVoiture = "VoitureR"
-                voitureValeur = 1
-            else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
-                voitureCouleur = couleurAleat()
-                voitureValeur = 2
-                numVoiture += 1
-                nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
-            
-            exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
-
-
-##----- Fermeture du fichier précédendemment ouvert -----##
-fichier_niveau.close()
-
-
+# ouvrir_niveau()
 
 ##------- Programme principal -------##
 
