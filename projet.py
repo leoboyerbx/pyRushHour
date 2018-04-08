@@ -225,6 +225,10 @@ def verif_gagnant():
         ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
         ok.pack()
 
+def couleurAleat(): #Fonction qui génère une couleur aléatoire
+    couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
+    return couleurs[randint(0, len(couleurs) - 1)]  #On retourne une couleur au hasard dans la liste
+
 def debugger():
     for i in range (6):
         print(memoire[i])
@@ -283,37 +287,39 @@ debug.pack()
 ##----- Ouverture du fichier en lecture seule -----##
 fichier_niveau = open('niveaux/niv1.rhl', 'r')
 
-##----- Affichage de toutes mes lignes -----##
-for ligne in fichier_niveau:
-    if ligne[0] != "#":
-        print(ligne)
-    if ligne[0:7] == "voiture":
-        index = ligne.index('(')
-        x = int(ligne[index+1])
-        y = int(ligne[index+3])
-        l = int(ligne[index+5])
-        s = ligne[index+7]
-        if s == "h":
-            sens = 0
-        else:
-            sens = 1
-        print(x,y,l,sens)
+##----- Lecture des voitures -----##
+numVoiture = 0
+for ligne in fichier_niveau:    #--ON parcourt chaque ligne dans le fichier
+    if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
+        if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
+            index = ligne.index('(')    #On cherche le début de l'instruction, puis on parcourt les infos écrites dans le fichier
+            voitureX = int(ligne[index+1])
+            voitureY = int(ligne[index+3])
+            voitureLongueur = int(ligne[index+5])
+            s = ligne[index+7]
+            if s == "h":    # On définit le sens
+                voitureSens = 0
+            else:
+                voitureSens = 1
+
+            voitureCouleur = "#000" #Couleur noire par défaut
+            voitureValeur = 2 #Valeur de voiture par défaut
+            if ligne[0:8] == "voitureR":    #Si on a affaire à la voiture Rouge, on lui donne une couleur, un nom et une valeur
+                voitureCouleur = "#f00"
+                nomVoiture = "VoitureR"
+                voitureValeur = 1
+            else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
+                voitureCouleur = couleurAleat()
+                voitureValeur = 2
+                numVoiture += 1
+                nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
+            
+            exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+
 
 ##----- Fermeture du fichier précédendemment ouvert -----##
 fichier_niveau.close()
 
-
-
-##------- Création des voitures -------##
-
-voitureR = Voiture(1, 2, 2, 0, "red", 1)
-voiture1 = Voiture(0,0,2,0, "green", 2)
-voiture2 = Voiture(0,1,3,1, "violet", 2)
-voiture3 = Voiture(0,4,2,1, "orange", 2)
-voiture2 = Voiture(3,1,3,1, "blue", 2)
-voiture2 = Voiture(4,4,2,0, "cyan", 2)
-voiture2 = Voiture(2,5,3,0, "green", 2)
-voiture2 = Voiture(5,0,3,1, "yellow", 2)
 
 
 ##------- Création des camions -------##
