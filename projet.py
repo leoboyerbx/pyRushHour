@@ -361,8 +361,6 @@ debug = Button(fen, text='debug', command=debugger)
 debug.pack()
 
 
-# ouvrir_niveau()
-
 ##------- Programme principal -------##
 
 jeu.bind('<Button-1>', Clic)  # évévement clic gauche (press)
