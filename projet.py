@@ -208,7 +208,8 @@ def ouvrir_niveau():
                         numVoiture += 1
                         nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
                     
-                    exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+                    # exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
+                    Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
 
 
         ##----- Fermeture du fichier précédendemment ouvert -----##
