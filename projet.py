@@ -220,7 +220,7 @@ def ouvrir_niveau():
 def editeur_niveau():
     """ Fonction qui démarre l'éditeur de niveaux """
     global courant_editeur  #Drapeau qui indique si on est en train d'éditer un niveau
-    courant_editeur = true
+    courant_editeur = True
     init_jeu()
     Voiture(0, 2 , 2, 0, "Red", 1)
 
