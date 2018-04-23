@@ -165,6 +165,8 @@ def init_jeu():
 
 def ouvrir_niveau():
     """ Fonction qui ouvre un niveau et crée les voitures correspondantes """
+    global courant_editeur
+    courant_editeur = False
     ##------- Lecture du Fichier -------##
     ##----- Ouverture du fichier en lecture seule -----##
     chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))  # Dialogue qui ouvre un choix de fichier
@@ -217,15 +219,21 @@ def ouvrir_niveau():
         menu_fichier.entryconfig("Fermer le niveau", state='normal')
 
 
-def editeur_niveau():
+def editeur_creer_niveau():
     """ Fonction qui démarre l'éditeur de niveaux """
     global courant_editeur  #Drapeau qui indique si on est en train d'éditer un niveau
     courant_editeur = True
     init_jeu()
     Voiture(0, 2 , 2, 0, "Red", 1)
 
+def editeur_n_voiture(x, y):
+    """ Création d'une voiture au clic """
+    print(x,y, couleurAleat())
+    Voiture(x, y , 1, 0, couleurAleat(), 2)
+
 def Clic(event):
     """Gestion de l'événement clic gauche"""
+
     global clic_objet   # Récupération des variables globales
     global liste_vehicules
     global target
@@ -244,7 +252,13 @@ def Clic(event):
             target.start_move()  # On applique la méthode start_move()
             break
         else:
-            clic_objet = False
+            global courant_editeur
+            if courant_editeur:
+                X = event.x//100
+                Y = event.y//100
+                editeur_n_voiture(X, Y)
+            else:
+                clic_objet = False
 
 
 def Drag(event):
@@ -331,6 +345,7 @@ n = 6                           # Nombre de cases par ligne et par colonne
 Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
+courant_editeur = False
 
 
 ##------- Création de la fenêtre -------##
@@ -342,7 +357,7 @@ fen.geometry('800x700+200+100')
 ##-------- Création de la barre de menu ---------##
 barre_menu = Menu(fen)
 menu_fichier = Menu(barre_menu, tearoff=0)
-menu_fichier.add_command(label="Créer un niveau", command=editeur_niveau)
+menu_fichier.add_command(label="Créer un niveau", command=editeur_creer_niveau)
 menu_fichier.add_command(label="Ouvrir un niveau", command=ouvrir_niveau)
 menu_fichier.add_command(label="Fermer le niveau", command=init_jeu, state='disabled')
 menu_fichier.add_separator()
