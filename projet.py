@@ -229,7 +229,10 @@ def editeur_creer_niveau():
 def editeur_n_voiture(x, y):
     """ Création d'une voiture au clic """
     print(x,y, couleurAleat())
-    Voiture(x, y , 1, 0, couleurAleat(), 2)
+    global target
+    target = Voiture(x, y , 1, 0, couleurAleat(), 2)
+
+
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -253,12 +256,11 @@ def Clic(event):
             break
         else:
             global courant_editeur
+            clic_objet = False
             if courant_editeur:
-                X = event.x//100
-                Y = event.y//100
-                editeur_n_voiture(X, Y)
-            else:
-                clic_objet = False
+                edX = event.x//100
+                edY = event.y//100
+                editeur_n_voiture(edX, edY)
 
 
 def Drag(event):
@@ -268,6 +270,7 @@ def Drag(event):
     global Largeur      # Récupération des variables globales
     global Hauteur
     global target
+    global courant_editeur
 
     if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
@@ -295,6 +298,11 @@ def Drag(event):
                 Y=limite_droite-deltaY
             # déplacement de l'objet
             jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
+
+    elif courant_editeur:
+        edX = event.x//100
+        edY = event.y//100
+
 
 
 def Drop(event):
