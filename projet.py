@@ -217,6 +217,12 @@ def ouvrir_niveau():
         menu_fichier.entryconfig("Fermer le niveau", state='normal')
 
 
+def editeur_niveau():
+    """ Fonction qui démarre l'éditeur de niveaux """
+    global courant_editeur  #Drapeau qui indique si on est en train d'éditer un niveau
+    courant_editeur = true
+    init_jeu()
+    Voiture(0, 2 , 2, 0, "Red", 1)
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -298,14 +304,15 @@ def Drop(event):
 
 def verif_gagnant():
     """ Fonction qui vérifie si le joueur a gagné """
-    global memoire
-    if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
-        fen_victoire = Tk()
-        fen_victoire.title('Bravo !')
-        bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
-        bravo.pack()
-        ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
-        ok.pack()
+    if not(courant_editeur):
+        global memoire
+        if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
+            fen_victoire = Tk()
+            fen_victoire.title('Bravo !')
+            bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
+            bravo.pack()
+            ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
+            ok.pack()
 
 def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
@@ -335,6 +342,7 @@ fen.geometry('800x700+200+100')
 ##-------- Création de la barre de menu ---------##
 barre_menu = Menu(fen)
 menu_fichier = Menu(barre_menu, tearoff=0)
+menu_fichier.add_command(label="Créer un niveau", command=editeur_niveau)
 menu_fichier.add_command(label="Ouvrir un niveau", command=ouvrir_niveau)
 menu_fichier.add_command(label="Fermer le niveau", command=init_jeu, state='disabled')
 menu_fichier.add_separator()
