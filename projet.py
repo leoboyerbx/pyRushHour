@@ -130,6 +130,24 @@ class Voiture:
                 memoire[Y+i][X] = 0
         self.limites = self.get_limits()
 
+    def update_tk(self):
+        """ Fonction qui met a jour le dessin Tk en fonction des propriétés """
+        longueur = self.longueur
+        x1 = self.X*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
+        y1 = self.Y*100
+        x2 = y2 = 0
+        if sens == 0: # Si la voiture est horizontale sur la grille
+            x2 = x1 +longueur*100  # x2 est défini selon la longueur de la voiture
+            y2 = y1+100     # y2 est défini pour une case de large
+            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
+                memoire[Y][X+i] = valeur # 1 pour la voiture rouge, 2 ou 3 pour les autres
+        else:   # Mêmes actions, mais la voiture est horizontale sur la grille
+            x2 = x1+100
+            y2 = y1+longueur*100
+            for i in range(longueur):
+                memoire[Y+i][X] = valeur
+        jeu.coords(self.rectangle, x1, y1, x2, y2) # On crée un rectangle sur le plateau de jeu, et on stocke son identifiant dans l'attribut "rectangle" de l'objet
+
             
 
                 
@@ -232,7 +250,16 @@ def editeur_n_voiture(x, y):
     global target
     target = Voiture(x, y , 1, 0, couleurAleat(), 2)
 
-
+def editeur_tracer_voiture(x, y):
+    """ Tracé de la voiture """
+    global target
+    tX = target.X
+    tY = traget.Y
+    tL = target.longueur
+    if target.longueur == 1:
+        if x > tX:
+            target.longueur += 1
+            target.update_tk()
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -302,7 +329,7 @@ def Drag(event):
     elif courant_editeur:
         edX = event.x//100
         edY = event.y//100
-
+        editeur_tracer_voiturevoiture(edX, edY)
 
 
 def Drop(event):
