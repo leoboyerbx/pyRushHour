@@ -174,7 +174,7 @@ def ouvrir_niveau():
         fichier_niveau = open(chemin_niveau, 'r')
 
         ##----- Lecture des voitures -----##
-        numVoiture = 0
+        numVoiture = 1 # le numéro de voiture est initialisé à 1 pour s'incrémenter à partir de 2
         for num_ligne, ligne in enumerate(fichier_niveau):    #--ON parcourt chaque ligne dans le fichier
             if ligne[0] != "#":         # Pour ne pas interpréter les lignes commentées
                 if ligne[0:7] == "voiture":     # Pour chaque instruction voiture
@@ -204,10 +204,9 @@ def ouvrir_niveau():
                         voitureValeur = 1
                     else: # Si c'est une autre voiture, on fait de même mais avec une autre valeur et une couleur aléatoire.
                         voitureCouleur = couleurAleat()
-                        voitureValeur = 2
                         numVoiture += 1
-                        nomVoiture = "Voiture"+str(numVoiture) # On crée un nom automatiquement pour la voiture
-                    
+                        voitureValeur = numVoiture
+                                            
                     # exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
                     Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
 
