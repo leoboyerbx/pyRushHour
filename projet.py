@@ -130,6 +130,24 @@ class Voiture:
                 memoire[Y+i][X] = 0
         self.limites = self.get_limits()
 
+    def update_tk(self):
+        """ Fonction qui met a jour le dessin Tk en fonction des propriétés """
+        longueur = self.longueur
+        x1 = self.X*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
+        y1 = self.Y*100
+        x2 = y2 = 0
+        if sens == 0: # Si la voiture est horizontale sur la grille
+            x2 = x1 +longueur*100  # x2 est défini selon la longueur de la voiture
+            y2 = y1+100     # y2 est défini pour une case de large
+            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
+                memoire[Y][X+i] = valeur # 1 pour la voiture rouge, 2 ou 3 pour les autres
+        else:   # Mêmes actions, mais la voiture est horizontale sur la grille
+            x2 = x1+100
+            y2 = y1+longueur*100
+            for i in range(longueur):
+                memoire[Y+i][X] = valeur
+        jeu.coords(self.rectangle, x1, y1, x2, y2) # On crée un rectangle sur le plateau de jeu, et on stocke son identifiant dans l'attribut "rectangle" de l'objet
+
             
 
                 
@@ -165,6 +183,8 @@ def init_jeu():
 
 def ouvrir_niveau():
     """ Fonction qui ouvre un niveau et crée les voitures correspondantes """
+    global courant_editeur
+    courant_editeur = False
     ##------- Lecture du Fichier -------##
     ##----- Ouverture du fichier en lecture seule -----##
     chemin_niveau = filedialog.askopenfilename(initialdir = "./niveaux/",title = "Choisir un fichier niveau",filetypes = (("Niveaux Rush Hour","*.rhl"),("Tous fichiers","*.*")))  # Dialogue qui ouvre un choix de fichier
@@ -216,9 +236,33 @@ def ouvrir_niveau():
         menu_fichier.entryconfig("Fermer le niveau", state='normal')
 
 
+def editeur_creer_niveau():
+    """ Fonction qui démarre l'éditeur de niveaux """
+    global courant_editeur  #Drapeau qui indique si on est en train d'éditer un niveau
+    courant_editeur = True
+    init_jeu()
+    Voiture(0, 2 , 2, 0, "Red", 1)
+
+def editeur_n_voiture(x, y):
+    """ Création d'une voiture au clic """
+    print(x,y, couleurAleat())
+    global target
+    target = Voiture(x, y , 1, 0, couleurAleat(), 2)
+
+def editeur_tracer_voiture(x, y):
+    """ Tracé de la voiture """
+    global target
+    tX = target.X
+    tY = traget.Y
+    tL = target.longueur
+    if target.longueur == 1:
+        if x > tX:
+            target.longueur += 1
+            target.update_tk()
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
+
     global clic_objet   # Récupération des variables globales
     global liste_vehicules
     global target
@@ -237,7 +281,12 @@ def Clic(event):
             target.start_move()  # On applique la méthode start_move()
             break
         else:
+            global courant_editeur
             clic_objet = False
+            if courant_editeur:
+                edX = event.x//100
+                edY = event.y//100
+                editeur_n_voiture(edX, edY)
 
 
 def Drag(event):
@@ -247,6 +296,7 @@ def Drag(event):
     global Largeur      # Récupération des variables globales
     global Hauteur
     global target
+    global courant_editeur
 
     if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
@@ -275,6 +325,11 @@ def Drag(event):
             # déplacement de l'objet
             jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
 
+    elif courant_editeur:
+        edX = event.x//100
+        edY = event.y//100
+        editeur_tracer_voiturevoiture(edX, edY)
+
 
 def Drop(event):
     """ Gestion de l'événement déposer (drop) """
@@ -297,14 +352,15 @@ def Drop(event):
 
 def verif_gagnant():
     """ Fonction qui vérifie si le joueur a gagné """
-    global memoire
-    if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
-        fen_victoire = Tk()
-        fen_victoire.title('Bravo !')
-        bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
-        bravo.pack()
-        ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
-        ok.pack()
+    if not(courant_editeur):
+        global memoire
+        if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
+            fen_victoire = Tk()
+            fen_victoire.title('Bravo !')
+            bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
+            bravo.pack()
+            ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
+            ok.pack()
 
 def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
@@ -323,6 +379,7 @@ n = 6                           # Nombre de cases par ligne et par colonne
 Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
+courant_editeur = False
 
 
 ##------- Création de la fenêtre -------##
@@ -334,6 +391,7 @@ fen.geometry('800x700+200+100')
 ##-------- Création de la barre de menu ---------##
 barre_menu = Menu(fen)
 menu_fichier = Menu(barre_menu, tearoff=0)
+menu_fichier.add_command(label="Créer un niveau", command=editeur_creer_niveau)
 menu_fichier.add_command(label="Ouvrir un niveau", command=ouvrir_niveau)
 menu_fichier.add_command(label="Fermer le niveau", command=init_jeu, state='disabled')
 menu_fichier.add_separator()
