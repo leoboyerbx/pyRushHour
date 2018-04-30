@@ -143,15 +143,23 @@ class Voiture:
         if sens == 0: # Si la voiture est horizontale sur la grille
             x2 = x1 +longueur*100  # x2 est défini selon la longueur de la voiture
             y2 = y1+100     # y2 est défini pour une case de large
-            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
-                memoire[Y][X+i] = valeur
         else:   # Mêmes actions, mais la voiture est horizontale sur la grille
             x2 = x1+100
             y2 = y1+longueur*100
-            for i in range(longueur):
-                memoire[Y+i][X] = valeur
         jeu.coords(self.rectangle, x1, y1, x2, y2) # On crée un rectangle sur le plateau de jeu, et on stocke son identifiant dans l'attribut "rectangle" de l'objet
 
+    def update_memoire(self):
+        longueur = self.longueur
+        sens = self.sens
+        valeur = self.valeur
+        X = self.X
+        Y = self.Y
+        if sens == 0: # Si la voiture est horizontale sur la grille
+            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
+                memoire[Y][X+i] = valeur
+        else:   # Mêmes actions, mais la voiture est horizontale sur la grille
+            for i in range(longueur):
+                memoire[Y+i][X] = valeur
             
 
                 
@@ -262,16 +270,13 @@ def editeur_tracer_voiture(x, y, voiture):
     tX = voiture.X
     tY = voiture.Y
     tL = voiture.longueur
-    if x != tX:
-        if x < tX:
-            voiture.X = x
-        voiture.longueur = abs(x-tX)+1
+    if x > tX:
+        voiture.sens = 0
+        voiture.longueur = x-tX+1
         voiture.update_tk()
-    elif y != tY:
-        if y < tY:
-            voiture.Y = y
+    elif y > tY:
         voiture.sens = 1
-        voiture.longueur = abs(y-tY)+1
+        voiture.longueur = y-tY+1
         voiture.update_tk()
     elif x == tX or y == tY:
         voiture.longueur = 1
@@ -352,8 +357,10 @@ def Drag(event):
 
 def Drop(event):
     """ Gestion de l'événement déposer (drop) """
-    if clic_objet: #Si on est en train de déplacer un objet
-        global target   # On récupère l'objet cible et ses coordonnées
+    global target   # On récupère l'objet cible et ses coordonnées
+    global clic_objet
+    global editeur_tracant
+    if clic_objet and not(editeur_tracant): #Si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
         if target.sens == 0: # Si l'objet est horizontal
             xG = round(xmin/c) # On arrondit au carré le plus proche
@@ -367,6 +374,19 @@ def Drop(event):
         print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
         target.set_coords(round(xmin/100), round(ymin/100))
         verif_gagnant() # On regarde si on a gagné
+    
+    elif editeur_tracant:
+        if target.longueur == 1:
+            jeu.delete(target.rectangle)
+            liste_vehicules.remove(target)
+        else:
+            target.update_memoire()
+        editeur_tracant = False
+        clic_objet = False
+    print(liste_vehicules)    
+    target = 0
+
+
 
 
 def verif_gagnant():
