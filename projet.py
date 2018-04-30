@@ -311,6 +311,7 @@ def Clic(event):
                 edX = event.x//100
                 edY = event.y//100
                 editeur_n_voiture(edX, edY)
+            break
 
 
 def Drag(event):
@@ -383,7 +384,7 @@ def Drop(event):
             target.update_memoire()
         editeur_tracant = False
         clic_objet = False
-    print(liste_vehicules)    
+    print(target)    
     target = 0
 
 
