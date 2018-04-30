@@ -133,14 +133,18 @@ class Voiture:
     def update_tk(self):
         """ Fonction qui met a jour le dessin Tk en fonction des propriétés """
         longueur = self.longueur
-        x1 = self.X*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
-        y1 = self.Y*100
+        sens = self.sens
+        valeur = self.valeur
+        X = self.X
+        Y = self.Y
+        x1 = (X)*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
+        y1 = (Y)*100
         x2 = y2 = 0
         if sens == 0: # Si la voiture est horizontale sur la grille
             x2 = x1 +longueur*100  # x2 est défini selon la longueur de la voiture
             y2 = y1+100     # y2 est défini pour une case de large
             for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
-                memoire[Y][X+i] = valeur # 1 pour la voiture rouge, 2 ou 3 pour les autres
+                memoire[Y][X+i] = valeur
         else:   # Mêmes actions, mais la voiture est horizontale sur la grille
             x2 = x1+100
             y2 = y1+longueur*100
@@ -250,16 +254,16 @@ def editeur_n_voiture(x, y):
     global target
     target = Voiture(x, y , 1, 0, couleurAleat(), 2)
 
-def editeur_tracer_voiture(x, y):
+def editeur_tracer_voiture(x, y, voiture):
     """ Tracé de la voiture """
-    global target
-    tX = target.X
-    tY = traget.Y
-    tL = target.longueur
-    if target.longueur == 1:
+    
+    tX = voiture.X
+    tY = voiture.Y
+    tL = voiture.longueur
+    if voiture.longueur == 1:
         if x > tX:
-            target.longueur += 1
-            target.update_tk()
+            voiture.longueur += 1
+            voiture.update_tk()
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -299,7 +303,7 @@ def Drag(event):
     global target
     global courant_editeur
 
-    if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+    if False: #clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
         xmin = int(xmin)
         xmax = int(xmax)
@@ -329,7 +333,7 @@ def Drag(event):
     elif courant_editeur:
         edX = event.x//100
         edY = event.y//100
-        editeur_tracer_voiturevoiture(edX, edY)
+        editeur_tracer_voiture(edX, edY, target)
 
 
 def Drop(event):
