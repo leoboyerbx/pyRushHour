@@ -252,6 +252,8 @@ def editeur_n_voiture(x, y):
     """ Création d'une voiture au clic """
     print(x,y, couleurAleat())
     global target
+    global editeur_tracant
+    editeur_tracant = True
     target = Voiture(x, y , 1, 0, couleurAleat(), 2)
 
 def editeur_tracer_voiture(x, y, voiture):
@@ -260,10 +262,21 @@ def editeur_tracer_voiture(x, y, voiture):
     tX = voiture.X
     tY = voiture.Y
     tL = voiture.longueur
-    if voiture.longueur == 1:
-        if x > tX:
-            voiture.longueur += 1
-            voiture.update_tk()
+    if x != tX:
+        if x < tX:
+            voiture.X = x
+        voiture.longueur = abs(x-tX)+1
+        voiture.update_tk()
+    elif y != tY:
+        if y < tY:
+            voiture.Y = y
+        voiture.sens = 1
+        voiture.longueur = abs(y-tY)+1
+        voiture.update_tk()
+    elif x == tX or y == tY:
+        voiture.longueur = 1
+        voiture.X = tX
+        voiture.update_tk()
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -282,6 +295,7 @@ def Clic(event):
         ymax = int(ymax)
         if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
             clic_objet = True   # On définit le drapeau sur true
+            editeur_tracant = False
             target = vehicule   # On place le véhicule en question comme cible
             target.start_move()  # On applique la méthode start_move()
             break
@@ -303,7 +317,7 @@ def Drag(event):
     global target
     global courant_editeur
 
-    if False: #clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+    if clic_objet == True and not(editeur_tracant):  # On n'agit que si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
         xmin = int(xmin)
         xmax = int(xmax)
@@ -385,7 +399,7 @@ Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
 courant_editeur = False
-
+editeur_tracant = False #Indique à l'éditeur si on est en train de tracer une voiture
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
