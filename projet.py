@@ -294,14 +294,24 @@ def Drop(event):
         target.set_coords(round(xmin/100), round(ymin/100))
         verif_gagnant() # On regarde si on a gagné
 
+def animation_victoire():
+    """ Fonction qui anime la sortie de la voiture rouge lors de la victoire """
+    voiture = liste_vehicules[0].rectangle
+    coords = jeu.coords(voiture)
+    if coords[0] <= 600:
+        jeu.move(voiture, 5, 0)
+        jeu.after(5, animation_victoire)
+
+
 
 def verif_gagnant():
     """ Fonction qui vérifie si le joueur a gagné """
     global memoire
     if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
+        animation_victoire()
         fen_victoire = Tk()
         fen_victoire.title('Bravo !')
-        bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
+        bravo = Label(fen_victoire, text="Félicitation, vous êtes sorti du bouchon !")
         bravo.pack()
         ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
         ok.pack()
@@ -348,7 +358,7 @@ bienvenue = Label(
 bienvenue.pack()
 
 ##------- Création du Canvas -------##
-jeu = Canvas(fen, width=700, height=600, bg='#fff')
+jeu = Canvas(fen, width=900, height=600, bg='#fff')
 jeu.pack()
 
 init_jeu()
@@ -366,4 +376,5 @@ jeu.bind('<Button-1>', Clic)  # évévement clic gauche (press)
 jeu.bind('<B1-Motion>', Drag)  # événement bouton gauche enfoncé (hold down)
 jeu.bind('<ButtonRelease-1>', Drop)
 
+fen.resizable(width=False, height=False)
 fen.mainloop()
