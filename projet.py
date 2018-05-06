@@ -383,7 +383,7 @@ def Drop(event):
             target.update_memoire()
         editeur_tracant = False
         clic_objet = False
-    print(target)    
+    print(liste_vehicules)
     target = 0
 
 
