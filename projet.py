@@ -133,21 +133,33 @@ class Voiture:
     def update_tk(self):
         """ Fonction qui met a jour le dessin Tk en fonction des propriétés """
         longueur = self.longueur
-        x1 = self.X*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
-        y1 = self.Y*100
+        sens = self.sens
+        valeur = self.valeur
+        X = self.X
+        Y = self.Y
+        x1 = (X)*100  # On convertit les coordonnées de la grille en coordonnées de pixels pour TKinter
+        y1 = (Y)*100
         x2 = y2 = 0
         if sens == 0: # Si la voiture est horizontale sur la grille
             x2 = x1 +longueur*100  # x2 est défini selon la longueur de la voiture
             y2 = y1+100     # y2 est défini pour une case de large
-            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
-                memoire[Y][X+i] = valeur # 1 pour la voiture rouge, 2 ou 3 pour les autres
         else:   # Mêmes actions, mais la voiture est horizontale sur la grille
             x2 = x1+100
             y2 = y1+longueur*100
-            for i in range(longueur):
-                memoire[Y+i][X] = valeur
         jeu.coords(self.rectangle, x1, y1, x2, y2) # On crée un rectangle sur le plateau de jeu, et on stocke son identifiant dans l'attribut "rectangle" de l'objet
 
+    def update_memoire(self):
+        longueur = self.longueur
+        sens = self.sens
+        valeur = self.valeur
+        X = self.X
+        Y = self.Y
+        if sens == 0: # Si la voiture est horizontale sur la grille
+            for i in range(longueur):       # On inscrit la présence de la voiture dans le tableau de mémoire
+                memoire[Y][X+i] = valeur
+        else:   # Mêmes actions, mais la voiture est horizontale sur la grille
+            for i in range(longueur):
+                memoire[Y+i][X] = valeur
             
 
                 
@@ -247,18 +259,28 @@ def editeur_n_voiture(x, y):
     """ Création d'une voiture au clic """
     print(x,y, couleurAleat())
     global target
+    global editeur_tracant
+    editeur_tracant = True
     target = Voiture(x, y , 1, 0, couleurAleat(), 2)
 
-def editeur_tracer_voiture(x, y):
+def editeur_tracer_voiture(x, y, voiture):
     """ Tracé de la voiture """
-    global target
-    tX = target.X
-    tY = traget.Y
-    tL = target.longueur
-    if target.longueur == 1:
-        if x > tX:
-            target.longueur += 1
-            target.update_tk()
+    
+    tX = voiture.X
+    tY = voiture.Y
+    tL = voiture.longueur
+    if x > tX:
+        voiture.sens = 0
+        voiture.longueur = x-tX+1
+        voiture.update_tk()
+    elif y > tY:
+        voiture.sens = 1
+        voiture.longueur = y-tY+1
+        voiture.update_tk()
+    elif x == tX or y == tY:
+        voiture.longueur = 1
+        voiture.X = tX
+        voiture.update_tk()
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
@@ -277,6 +299,7 @@ def Clic(event):
         ymax = int(ymax)
         if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
             clic_objet = True   # On définit le drapeau sur true
+            editeur_tracant = False
             target = vehicule   # On place le véhicule en question comme cible
             target.start_move()  # On applique la méthode start_move()
             break
@@ -287,6 +310,7 @@ def Clic(event):
                 edX = event.x//100
                 edY = event.y//100
                 editeur_n_voiture(edX, edY)
+            break
 
 
 def Drag(event):
@@ -298,7 +322,7 @@ def Drag(event):
     global target
     global courant_editeur
 
-    if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+    if clic_objet == True and not(editeur_tracant):  # On n'agit que si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
         xmin = int(xmin)
         xmax = int(xmax)
@@ -328,13 +352,15 @@ def Drag(event):
     elif courant_editeur:
         edX = event.x//100
         edY = event.y//100
-        editeur_tracer_voiturevoiture(edX, edY)
+        editeur_tracer_voiture(edX, edY, target)
 
 
 def Drop(event):
     """ Gestion de l'événement déposer (drop) """
-    if clic_objet: #Si on est en train de déplacer un objet
-        global target   # On récupère l'objet cible et ses coordonnées
+    global target   # On récupère l'objet cible et ses coordonnées
+    global clic_objet
+    global editeur_tracant
+    if clic_objet and not(editeur_tracant): #Si on est en train de déplacer un objet
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
         if target.sens == 0: # Si l'objet est horizontal
             xG = round(xmin/c) # On arrondit au carré le plus proche
@@ -348,6 +374,19 @@ def Drop(event):
         print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
         target.set_coords(round(xmin/100), round(ymin/100))
         verif_gagnant() # On regarde si on a gagné
+    
+    elif editeur_tracant:
+        if target.longueur == 1:
+            jeu.delete(target.rectangle)
+            liste_vehicules.remove(target)
+        else:
+            target.update_memoire()
+        editeur_tracant = False
+        clic_objet = False
+    print(target)    
+    target = 0
+
+
 
 
 def verif_gagnant():
@@ -380,7 +419,7 @@ Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
 courant_editeur = False
-
+editeur_tracant = False #Indique à l'éditeur si on est en train de tracer une voiture
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
