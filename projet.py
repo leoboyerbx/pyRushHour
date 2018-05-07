@@ -308,7 +308,6 @@ def update_score():
     global score
     global score_nmouv
     global score_nmin
-    print (score, score_nmin, score_nmouv)
     score = (100//score_nmouv)*score_nmin
 
 
