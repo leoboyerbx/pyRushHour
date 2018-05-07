@@ -213,7 +213,10 @@ def ouvrir_niveau():
                     Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
                 elif ligne[0:4] == "nmin":
                     global score_nmin
-                    score_nmin = int(ligne[5])
+                    score_nmin = int(ligne[5::])
+                elif ligne[0:7] == "nivname":
+                    global nom_niveau
+                    nom_niveau = str(ligne[8::])
 
 
 
@@ -353,6 +356,8 @@ liste_vehicules = []    # Liste qui contient toutes les instances de la classe V
 score = 0
 score_nmin = 0 # Nombre minimal de déplacements
 score_nmouv = 0 #nombre total de mouvements
+
+nom_niveau = "default"
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
