@@ -300,7 +300,7 @@ def animation_victoire():
     coords = jeu.coords(voiture)
     if coords[0] <= 600:
         jeu.move(voiture, 5, 0)
-        jeu.after(5, animation_victoire)
+        jeu.after(5, animation_victoire) #On rappelle la fonction pour animer
 
 
 
@@ -309,12 +309,11 @@ def verif_gagnant():
     global memoire
     if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
         animation_victoire()
-        fen_victoire = Tk()
-        fen_victoire.title('Bravo !')
-        bravo = Label(fen_victoire, text="Félicitation, vous êtes sorti du bouchon !")
-        bravo.pack()
-        ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
-        ok.pack()
+        cache = jeu.create_rectangle(1, 1, 600, 600, width=0, fill="#ccc", stipple="gray75")
+        cadre = jeu.create_rectangle(200, 200, 400, 400, width=0, fill="#fff")
+        text = jeu.create_text(300,250,text="Bravo !", fill='Black',font='Arial 20')
+        text2 = jeu.create_text(300,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
+        # score = jeu.create_text(350,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
 
 def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
