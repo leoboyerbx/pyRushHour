@@ -13,3 +13,6 @@ voiture(x=4, y=2, longueur=2, sens=v)
 voiture(x=5, y=1, longueur=3, sens=v)
 voiture(x=4, y=4, longueur=2, sens=h)
 voiture(x=3, y=5, longueur=2, sens=h)
+
+# Nombre minimal de déplacements
+nmin(10)

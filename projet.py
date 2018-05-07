@@ -143,6 +143,8 @@ def init_jeu():
     global jeu
     global memoire
     global liste_vehicules
+    global score_nmouv
+    score_nmouv = 0
     ##------- Tableau de mémoire -------##
     memoire = []
     for ligne in range(1,7):
@@ -209,6 +211,10 @@ def ouvrir_niveau():
                                             
                     # exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
                     Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
+                elif ligne[0:4] == "nmin":
+                    global score_nmin
+                    score_nmin = int(ligne[5])
+
 
 
         ##----- Fermeture du fichier précédendemment ouvert -----##
@@ -292,7 +298,19 @@ def Drop(event):
         [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
         print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
         target.set_coords(round(xmin/100), round(ymin/100))
+        global score_nmouv
+        score_nmouv +=1
+        update_score()
         verif_gagnant() # On regarde si on a gagné
+
+def update_score():
+    """ Fonction qui met à jour le score en fonction du nombre de mouvements """
+    global score
+    global score_nmouv
+    global score_nmin
+    print (score, score_nmin, score_nmouv)
+    score = (100//score_nmouv)*score_nmin
+
 
 def animation_victoire():
     """ Fonction qui anime la sortie de la voiture rouge lors de la victoire """
@@ -313,7 +331,8 @@ def verif_gagnant():
         cadre = jeu.create_rectangle(200, 200, 400, 400, width=0, fill="#fff")
         text = jeu.create_text(300,250,text="Bravo !", fill='Black',font='Arial 20')
         text2 = jeu.create_text(300,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
-        # score = jeu.create_text(350,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
+        global score
+        score = jeu.create_text(300,350,text="Score: {}".format(score), fill='Black',font='Arial 11')
 
 def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
@@ -332,7 +351,9 @@ n = 6                           # Nombre de cases par ligne et par colonne
 Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
-
+score = 0
+score_nmin = 0 # Nombre minimal de déplacements
+score_nmouv = 0 #nombre total de mouvements
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
@@ -365,8 +386,8 @@ init_jeu()
 ##------- Création des boutons -------##
 quitter = Button(fen, text='Quitter', command=fen.quit)
 quitter.pack()
-debug = Button(fen, text='debug', command=debugger)
-debug.pack()
+# debug = Button(fen, text='debug', command=debugger)
+# debug.pack()
 
 
 ##------- Programme principal -------##

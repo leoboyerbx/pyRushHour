@@ -1,0 +1,6 @@
+# --- Niveau 1 --- #
+# voiture rouge
+voitureR(x=1, y=2, longueur=2, sens=h)
+
+# NIveau vide pour les tests
+
