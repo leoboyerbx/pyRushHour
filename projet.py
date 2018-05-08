@@ -22,10 +22,11 @@
 #
 #
 ##------- Importation des modules --------##
+from math import *
+from random import *
+from tkinter import *
 from tkinter import filedialog
-from tkinter import*
-from random import*
-from math import*
+import requests
 
 
 ##------- Création des voitures ------#
