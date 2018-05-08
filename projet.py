@@ -147,8 +147,8 @@ def init_jeu():
     global liste_vehicules
     global score_nmouv
     global victoire
-    score_nmouv = 0
-    victoire = False
+    score_nmouv = 0 # On remet à zéro le nombre de mouvements
+    victoire = False # ON indique que le joureur n'a pas encore gagné
     ##------- Tableau de mémoire -------##
     memoire = []
     for ligne in range(1,7):
@@ -166,7 +166,7 @@ def init_jeu():
         n = k+1
         jeu.create_line(n*c, 0, n*c, 600)
         jeu.create_line(0, n*c, 600, n*c)
-    menu_fichier.entryconfig("Fermer le niveau", state='disabled')
+    menu_fichier.entryconfig("Fermer le niveau", state='disabled') # Comme aucun fichier n'est encore ouvert, on grise l'option pour fermer le niveau.
 
 
 def ouvrir_niveau():
@@ -454,5 +454,5 @@ jeu.bind('<Button-1>', Clic)  # évévement clic gauche (press)
 jeu.bind('<B1-Motion>', Drag)  # événement bouton gauche enfoncé (hold down)
 jeu.bind('<ButtonRelease-1>', Drop)
 
-fen.resizable(width=False, height=False)
+fen.resizable(width=False, height=False) # on veut une fenêtre non redimensionnable
 fen.mainloop()
