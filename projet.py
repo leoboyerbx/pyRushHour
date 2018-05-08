@@ -27,6 +27,7 @@ from random import *
 from tkinter import *
 from tkinter import filedialog
 import requests
+import webbrowser
 
 
 ##------- Création des voitures ------#
@@ -253,7 +254,7 @@ def Clic(event):
                 clic_objet = False
     else: # Si le joueur a gagné
         if 210 <= X <= 390 and 380 <= Y <= 440: # si il clique sur le bouton des scores
-            print("envoi en ligne")
+            envoi_score_dialogue()
 
 
 def Drag(event):
@@ -349,7 +350,8 @@ def verif_gagnant():
         global victoire
         victoire = True
 
-def couleurAleat(): #Fonction qui génère une couleur aléatoire
+def couleurAleat():
+    """ Fonction qui génère une couleur aléatoire """
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
     return couleurs[randint(0, len(couleurs) - 1)]  #On retourne une couleur au hasard dans la liste
 
@@ -358,11 +360,49 @@ def debugger(): #Débogage
         print(memoire[i])
 
 
+def ouvrir_site(event):
+    webbrowser.open_new(r"http://www.rushhour.cf/")
 
-def envoi_score_requete():
-    data = {"pseudo":"Richard", "score":"12", "niveau":"Niveau 1 officiel"}
-    r = requests.post("http://ents1-sapinthique.codeanyapp.com/pyRushHour/scores.php?new_score=true", data = data)
-    print(r.text)
+def envoi_score_dialogue():
+    """ Fonction qui ouvre la fenêtre d'envoi du score en ligne """
+    global envoi_score
+    envoi_score = Tk() # On crée la fenêtre et on ajoute les éléments
+    envoi_score.title('Envoi du score en ligne')
+    envoi_score.geometry('400x170+400+400')
+    info = Label(envoi_score, text='Vous pouvez envoyer votre score en ligne pour vous comparer aux autres !')
+    info.pack()
+    lien = Label(envoi_score, text="www.rushhour.cf", fg="blue", cursor="hand2")
+    lien.pack()
+    lien.bind("<Button-1>", ouvrir_site)
+
+    info2 = Label(envoi_score, text='Choisissez un pseudo :')
+    info2.pack()
+
+    pseudo = Entry(envoi_score)
+    pseudo.pack()
+
+    valider = Button(envoi_score, text='Valider', command=lambda:envoi_score_requete(pseudo.get()))
+    valider.pack()
+
+    global annuler
+    annuler = Button(envoi_score, text='Annuler', command=envoi_score.destroy)
+    annuler.pack()
+
+
+
+def envoi_score_requete(pseudo):
+    """ Fonction qui envoie le score du joueur sur le serveur """
+    global score
+    global nom_niveau
+    data = {"pseudo":pseudo, "score":score, "niveau":nom_niveau}
+    r = requests.post("http://rushhour.cf/scores.php?new_score=true", data = data)
+    print(data)
+    if r.text =="ok": #Si le serveur a envoyé une réponse favorable
+        retour = Label(envoi_score, text="Score envoyé avec succès.") # On informe le joueur
+    else :
+        retour = Label(envoi_score, text="Un erreur s'est produite")
+    retour.pack()
+    annuler.config(text="Fermer")
 
 ##------- Variables globales --------##
 
@@ -377,7 +417,7 @@ score = 0
 score_nmin = 0 # Nombre minimal de déplacements
 score_nmouv = 0 #nombre total de mouvements
 victoire = False #Drapeau qui indique si le joueur a gagné
-nom_niveau = "default"
+nom_niveau = "Inconnu"
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
@@ -397,8 +437,7 @@ barre_menu.add_cascade(label="Fichier", menu=menu_fichier)
 fen.config(menu=barre_menu)
 
 ##-------- Création des zones de texte ---------##
-bienvenue = Label(
-    fen, text='Bienvenue sur RushHour, déplacez les véhicules pour faire sortir la voiture rouge !')
+bienvenue = Label(fen, text='Bienvenue sur RushHour, déplacez les véhicules pour faire sortir la voiture rouge !')
 bienvenue.pack()
 
 ##------- Création du Canvas -------##
@@ -407,11 +446,6 @@ jeu.pack()
 
 init_jeu()
 
-##------- Création des boutons -------##
-quitter = Button(fen, text='Quitter', command=fen.quit)
-quitter.pack()
-debug = Button(fen, text='debug', command=envoi_score)
-debug.pack()
 
 
 ##------- Programme principal -------##

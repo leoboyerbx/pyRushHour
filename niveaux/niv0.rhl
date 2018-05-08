@@ -4,3 +4,5 @@ voitureR(x=1, y=2, longueur=2, sens=h)
 
 # NIveau vide pour les tests
 
+# Nombre minimal de déplacements
+nmin=1
