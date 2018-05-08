@@ -145,7 +145,9 @@ def init_jeu():
     global memoire
     global liste_vehicules
     global score_nmouv
+    global victoire
     score_nmouv = 0
+    victoire = False
     ##------- Tableau de mémoire -------##
     memoire = []
     for ligne in range(1,7):
@@ -229,83 +231,86 @@ def ouvrir_niveau():
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
-    global clic_objet   # Récupération des variables globales
-    global liste_vehicules
-    global target
     X = event.x     # Coordonnées du clic
     Y = event.y
-    for vehicule in liste_vehicules:    # Permet de définir si on a cliqué ou non sur un véhicule
-        """ Pour chaque véhicule on teste si les coordonnées du clic correspondent aux coordonnées du véhicule """
-        [xmin, ymin, xmax, ymax] = jeu.coords(vehicule.rectangle)
-        xmin = int(xmin)
-        xmax = int(xmax)
-        ymin = int(ymin)
-        ymax = int(ymax)
-        if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
-            clic_objet = True   # On définit le drapeau sur true
-            target = vehicule   # On place le véhicule en question comme cible
-            target.start_move()  # On applique la méthode start_move()
-            break
-        else:
-            clic_objet = False
+    if not(victoire): #Si le joueur n'a pas encore gagné
+        global clic_objet   # Récupération des variables globales
+        global liste_vehicules
+        global target
+        for vehicule in liste_vehicules:    # Permet de définir si on a cliqué ou non sur un véhicule
+            """ Pour chaque véhicule on teste si les coordonnées du clic correspondent aux coordonnées du véhicule """
+            [xmin, ymin, xmax, ymax] = jeu.coords(vehicule.rectangle)
+            xmin = int(xmin)
+            xmax = int(xmax)
+            ymin = int(ymin)
+            ymax = int(ymax)
+            if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
+                clic_objet = True   # On définit le drapeau sur true
+                target = vehicule   # On place le véhicule en question comme cible
+                target.start_move()  # On applique la méthode start_move()
+                break
+            else:
+                clic_objet = False
 
 
 def Drag(event):
     """ Gestion de l'événement glisser """
-    X = event.x # Récupération des coordonnées du clic
-    Y = event.y
-    global Largeur      # Récupération des variables globales
-    global Hauteur
-    global target
+    if not(victoire): #Si le joueur n'a pas encore gagné
+        X = event.x # Récupération des coordonnées du clic
+        Y = event.y
+        global Largeur      # Récupération des variables globales
+        global Hauteur
+        global target
 
-    if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
-        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
-        xmin = int(xmin)
-        xmax = int(xmax)
-        ymin = int(ymin)
-        ymax = int(ymax)
-        deltaX = target.largeur/2
-        deltaY = target.hauteur/2
-        [limite_gauche, limite_droite] = target.limites #On récupère les limites de déplacement de l'objet
+        if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
+            xmin = int(xmin)
+            xmax = int(xmax)
+            ymin = int(ymin)
+            ymax = int(ymax)
+            deltaX = target.largeur/2
+            deltaY = target.hauteur/2
+            [limite_gauche, limite_droite] = target.limites #On récupère les limites de déplacement de l'objet
 
 
-        # Empêcher l'objet de sortir de ses limites
-        if target.sens == 0: #Si horizontal
-            if X<deltaX + limite_gauche:
-                X=deltaX + limite_gauche
-            if X>limite_droite-deltaX:
-                X=limite_droite-deltaX
-            # déplacement de l'objet
-            jeu.coords(target.rectangle,X-deltaX,ymin,X+deltaX,ymax)
-        else:   # Si vertical
-            if Y<deltaY + limite_gauche:
-                Y=deltaY + limite_gauche
-            if Y>limite_droite-deltaY:
-                Y=limite_droite-deltaY
-            # déplacement de l'objet
-            jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
+            # Empêcher l'objet de sortir de ses limites
+            if target.sens == 0: #Si horizontal
+                if X<deltaX + limite_gauche:
+                    X=deltaX + limite_gauche
+                if X>limite_droite-deltaX:
+                    X=limite_droite-deltaX
+                # déplacement de l'objet
+                jeu.coords(target.rectangle,X-deltaX,ymin,X+deltaX,ymax)
+            else:   # Si vertical
+                if Y<deltaY + limite_gauche:
+                    Y=deltaY + limite_gauche
+                if Y>limite_droite-deltaY:
+                    Y=limite_droite-deltaY
+                # déplacement de l'objet
+                jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
 
 
 def Drop(event):
     """ Gestion de l'événement déposer (drop) """
-    if clic_objet: #Si on est en train de déplacer un objet
-        global target   # On récupère l'objet cible et ses coordonnées
-        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
-        if target.sens == 0: # Si l'objet est horizontal
-            xG = round(xmin/c) # On arrondit au carré le plus proche
-            jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax) # On déplace l'objet (drop)
-        else: # Si l'objet est vertical, pareil mais sur Y
-            yG = round(ymin/c)
-            jeu.coords(target.rectangle, xmin, yG*c, xmax, yG*c+target.hauteur)
+    if not(victoire): #Si le joueur n'a pas encore gagné
+        if clic_objet: #Si on est en train de déplacer un objet
+            global target   # On récupère l'objet cible et ses coordonnées
+            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
+            if target.sens == 0: # Si l'objet est horizontal
+                xG = round(xmin/c) # On arrondit au carré le plus proche
+                jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax) # On déplace l'objet (drop)
+            else: # Si l'objet est vertical, pareil mais sur Y
+                yG = round(ymin/c)
+                jeu.coords(target.rectangle, xmin, yG*c, xmax, yG*c+target.hauteur)
 
-        
-        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
-        print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
-        target.set_coords(round(xmin/100), round(ymin/100))
-        global score_nmouv
-        score_nmouv +=1
-        update_score()
-        verif_gagnant() # On regarde si on a gagné
+            
+            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
+            print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
+            target.set_coords(round(xmin/100), round(ymin/100))
+            global score_nmouv
+            score_nmouv +=1
+            update_score()
+            verif_gagnant() # On regarde si on a gagné
 
 def update_score():
     """ Fonction qui met à jour le score en fonction du nombre de mouvements """
@@ -335,7 +340,9 @@ def verif_gagnant():
         text = jeu.create_text(300,250,text="Bravo !", fill='Black',font='Arial 20')
         text2 = jeu.create_text(300,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
         global score
-        score = jeu.create_text(300,350,text="Score: {}".format(score), fill='Black',font='Arial 11')
+        affScore = jeu.create_text(300,350,text="Score: {}".format(score), fill='Black',font='Arial 11')
+        global victoire
+        victoire = True
 
 def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
@@ -344,6 +351,11 @@ def couleurAleat(): #Fonction qui génère une couleur aléatoire
 def debugger(): #Débogage
     for i in range (6):
         print(memoire[i])
+
+def envoi_score():
+    data = {"pseudo":"Richard", "score":"12", "niveau":"Niveau 1 officiel"}
+    r = requests.post("http://ents1-sapinthique.codeanyapp.com/pyRushHour/scores.php?new_score=true", data = data)
+    print(r.text)
 
 ##------- Variables globales --------##
 
@@ -357,7 +369,7 @@ liste_vehicules = []    # Liste qui contient toutes les instances de la classe V
 score = 0
 score_nmin = 0 # Nombre minimal de déplacements
 score_nmouv = 0 #nombre total de mouvements
-
+victoire = False #Drapeau qui indique si le joueur a gagné
 nom_niveau = "default"
 
 ##------- Création de la fenêtre -------##
@@ -391,8 +403,8 @@ init_jeu()
 ##------- Création des boutons -------##
 quitter = Button(fen, text='Quitter', command=fen.quit)
 quitter.pack()
-# debug = Button(fen, text='debug', command=debugger)
-# debug.pack()
+debug = Button(fen, text='debug', command=envoi_score)
+debug.pack()
 
 
 ##------- Programme principal -------##
