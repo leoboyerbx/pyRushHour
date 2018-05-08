@@ -251,6 +251,9 @@ def Clic(event):
                 break
             else:
                 clic_objet = False
+    else: # Si le joueur a gagné
+        if 210 <= X <= 390 and 380 <= Y <= 440: # si il clique sur le bouton des scores
+            print("envoi en ligne")
 
 
 def Drag(event):
@@ -336,9 +339,11 @@ def verif_gagnant():
     if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
         animation_victoire()
         cache = jeu.create_rectangle(1, 1, 600, 600, width=0, fill="#ccc", stipple="gray75")
-        cadre = jeu.create_rectangle(200, 200, 400, 400, width=0, fill="#fff")
+        cadre = jeu.create_rectangle(200, 200, 400, 450, width=0, fill="#fff")
+        bouton = jeu.create_rectangle(210, 380, 390, 440, width=0, fill="#487eb0")
         text = jeu.create_text(300,250,text="Bravo !", fill='Black',font='Arial 20')
         text2 = jeu.create_text(300,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
+        text3 = jeu.create_text(300,410,text="Envoyer mon score \n en ligne", fill='White',font='Arial 13')
         global score
         affScore = jeu.create_text(300,350,text="Score: {}".format(score), fill='Black',font='Arial 11')
         global victoire
@@ -352,7 +357,9 @@ def debugger(): #Débogage
     for i in range (6):
         print(memoire[i])
 
-def envoi_score():
+
+
+def envoi_score_requete():
     data = {"pseudo":"Richard", "score":"12", "niveau":"Niveau 1 officiel"}
     r = requests.post("http://ents1-sapinthique.codeanyapp.com/pyRushHour/scores.php?new_score=true", data = data)
     print(r.text)
