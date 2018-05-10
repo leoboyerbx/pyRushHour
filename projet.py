@@ -363,7 +363,7 @@ def aide(): #Intelligence Artificielle
                     if grille[vehicule_en_coursY-1][vehicule_en_coursX] == 0:            #test de la case au dessus
                         grille[vehicule_en_coursY-1][vehicule_en_coursX] = numero_vehicule_en_cours       #déplacement du véhicule dans la grille
                         grille[vehicule_en_coursY - liste_vehicules_aide[numero_vehicule_en_cours][2]+1][vehicule_en_coursX+1] = 0
-                        liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1]-1     #déplacement du véhicule dans liste_deplacement_aide
+                        liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1] - 1     #déplacement du véhicule dans liste_deplacement_aide
                         deplacements_aide.append(['le haut',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
                     else:
                         numero_vehicule_en_cours = grille[vehicule_en_coursY - 1][vehicule_en_coursX] 
