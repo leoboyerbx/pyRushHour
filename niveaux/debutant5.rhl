@@ -1,0 +1,21 @@
+# --- Niveau 5 --- #
+nivname=Niveau débutant 5
+#Débutant
+
+# voiture rouge
+voitureR(x=1, y=2, longueur=2, sens=h)
+
+# Autres voitures
+voiture(x=0, y=1, longueur=3, sens=v)
+voiture(x=0, y=0, longueur=2, sens=h)
+voiture(x=4, y=5, longueur=2, sens=h)
+voiture(x=4, y=4, longueur=2, sens=h)
+voiture(x=1, y=3, longueur=3, sens=h)
+voiture(x=5, y=0, longueur=2, sens=v)
+voiture(x=5, y=2, longueur=2, sens=v)
+voiture(x=4, y=1, longueur=3, sens=v)
+voiture(x=0, y=4, longueur=2, sens=v)
+voiture(x=3, y=0, longueur=3, sens=v)
+
+# Nombre minimal de déplacements
+nmin=9

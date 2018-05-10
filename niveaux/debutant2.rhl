@@ -1,5 +1,7 @@
-# --- Niveau 1 --- #
-nivname=Niveau 2 officiel
+# --- Niveau 2 --- #
+nivname=Niveau débutant 2
+#Débutant
+
 # voiture rouge
 voitureR(x=0, y=2, longueur=2, sens=h)
 
@@ -16,4 +18,4 @@ voiture(x=4, y=4, longueur=2, sens=h)
 voiture(x=3, y=5, longueur=2, sens=h)
 
 # Nombre minimal de déplacements
-nmin=10
+nmin=8

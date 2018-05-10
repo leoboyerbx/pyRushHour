@@ -1,5 +1,7 @@
 # --- Niveau 1 --- #
-nivname=Niveau 1 officiel
+nivname=Niveau débutant 1
+#Débutant
+
 # voiture rouge
 voitureR(x=1, y=2, longueur=2, sens=h)
 

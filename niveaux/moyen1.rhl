@@ -1,0 +1,21 @@
+# --- Niveau 6 --- #
+nivname=Niveau intermédiaire 1
+#Débutant
+
+# voiture rouge
+voitureR(x=3, y=2, longueur=2, sens=h)
+
+# Autres voitures
+voiture(x=0, y=1, longueur=2, sens=v)
+voiture(x=0, y=0, longueur=2, sens=h)
+voiture(x=2, y=0, longueur=2, sens=h)
+voiture(x=2, y=1, longueur=2, sens=h)
+voiture(x=0, y=5, longueur=2, sens=h)
+voiture(x=3, y=3, longueur=3, sens=h)
+voiture(x=1, y=2, longueur=2, sens=v)
+voiture(x=2, y=2, longueur=3, sens=v)
+voiture(x=5, y=0, longueur=3, sens=v)
+voiture(x=4, y=0, longueur=2, sens=v)
+
+# Nombre minimal de déplacements
+nmin=21
