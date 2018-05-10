@@ -320,6 +320,8 @@ def aide(): #Intelligence Artificielle
     global sens
     global longueur
 
+    aide_texte.configure(text="")       #Remise à zéro du champ texte d'aide
+
     liste_vehicules_aide = []       #Copie de la liste des caractéristiques des véhicules
     for vehicule in liste_vehicules:
         liste_vehicules_aide.append([vehicule.X, vehicule.Y, vehicule.longueur, vehicule.valeur,vehicule.sens],)
@@ -343,7 +345,7 @@ def aide(): #Intelligence Artificielle
         vehicule_en_coursX = voitureRx
         vehicule_en_coursY = voitureRy
         numero_vehicule_en_cours = grille[2][voitureRx]
-        if grille[2][voitureRx+1] != 0:
+        if grille[2][voitureRx+2] == 0:
             aide_texte.configure(text='Déplacez déjà la voiture rouge')
         else:    
             while grille[2][voitureRx] != 5:
@@ -389,15 +391,15 @@ def aide(): #Intelligence Artificielle
                     elif liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6:    #s'il n'est pas collé à droite
                         if grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2]] == 0:       #test de la case à droite
                             grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille                    grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2] + 1] = 0
-                           grille[vehicule_en_coursY][vehicule_en_coursX] = 0
+                            grille[vehicule_en_coursY][vehicule_en_coursX] = 0
                             liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
                             deplacements_aide.append(['la droite',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste   
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
 
                  
-        
-             print(numero_vehicule_en_cours)
+                print(deplacements_aide)
+            print(numero_vehicule_en_cours)
         #aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
             print(deplacements_aide)        
                        
