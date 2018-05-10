@@ -355,11 +355,6 @@ def couleurAleat():
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
     return couleurs[randint(0, len(couleurs) - 1)]  #On retourne une couleur au hasard dans la liste
 
-def debugger(): #Débogage
-    for i in range (6):
-        print(memoire[i])
-
-
 def ouvrir_site(event):
     webbrowser.open_new(r"http://www.rushhour.cf/")
 
