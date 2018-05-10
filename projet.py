@@ -346,9 +346,12 @@ def aide(): #Intelligence Artificielle
         vehicule_en_coursY = voitureRy
         numero_vehicule_en_cours = grille[2][voitureRx]
         if grille[2][voitureRx+2] == 0:
-            aide_texte.configure(text='Déplacez déjà la voiture rouge')
-        else:    
+                aide_texte.configure(text='Déplacez déjà la voiture rouge')
+        else:
             while grille[2][voitureRx] != 5:
+                if grille[2][voitureRx+2] == 0:
+                    aide_texte.configure(text='Déplacez déjà la voiture rouge')
+            #else:
                 vehicule_en_coursX = liste_vehicules_aide[numero_vehicule_en_cours][0]
                 vehicule_en_coursY = liste_vehicules_aide[numero_vehicule_en_cours][1]
                             
