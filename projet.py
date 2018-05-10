@@ -363,12 +363,12 @@ def aide(): #Intelligence Artificielle
                    #     vehicule_devant = liste_vehicules_aide[voiture][3] #enregistrement du numéro du véhicule situé devant la voiture rouge dans une variable
                     #    print(vehicule_devant)    """            
     #- Véhicules verticaux -#    
-        #- Test en haut -#
         if liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:     #si c'est un véhicule vertical
+        #- Test en haut -#
             if liste_vehicules_aide[numero_vehicule_en_cours][1] > 0 : #s'il n'est pas collé en haut 
                 if grille[vehicule_en_coursY-1][vehicule_en_coursX] == 0:            #test de la case au dessus
                     grille[vehicule_en_coursY-1][vehicule_en_coursX] = numero_vehicule_en_cours       #déplacement du véhicule dans la grille
-                    grille[vehicule_en_coursY + liste_vehicules_aide[numero_vehicule_en_cours][2]][vehicule_en_coursX+2] = 0
+               "     grille[vehicule_en_coursY - liste_vehicules_aide[numero_vehicule_en_cours][2]+1][vehicule_en_coursX+1] = 0
                     liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1]-1     #déplacement du véhicule dans liste_deplacement_aide
                     deplacements_aide.append(['le haut',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
      
@@ -381,22 +381,22 @@ def aide(): #Intelligence Artificielle
                     deplacements_aide.append(['le bas',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
         
     #- Véhicules horizontaux -#    
-        #- Test à droite -#
         elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
+        #- Test à droite -#
             if liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1 < 5:    #s'il n'est pas collé à droite
-            if grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] == 0:       #test de la case en dessous
-                grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] = liste_vehicules_aide[numero_vehicule_en_cours][3]    #déplacement du véhicule dans la grille
-                grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+1][vehicule_en_coursX+2] = 0
-                liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
-                deplacements_aide.append(['la droite',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste   
+                if grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] == 0:       #test de la case en dessous
+                    grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] = liste_vehicules_aide[numero_vehicule_en_cours][3]    #déplacement du véhicule dans la grille
+                    grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2] + 1] = 0
+                    liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
+                    deplacements_aide.append(['la droite',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste   
        
         #- Test à gauche -#
-        elif liste_vehicules_aide[numero_vehicule_en_cours][0] > 0 and liste_vehicules_aide[numero_vehicule_en_cours][4] == 0: #s'il n'est pas collé à gauche et que c'est un véhicule horizontal
-            if grille[vehicule_en_coursY][liste_vehicules_aide[numero_vehicule_en_cours][0]] == 0:       #test de la case à gauche
-                grille[liste_vehicules_aide[numero_vehicule_en_cours][1]][vehicule_en_coursX-1] = liste_vehicules_aide[numero_vehicule_en_cours][3]       #déplacement du véhicule dans la grille
-                grille[liste_vehicules_aide[numero_vehicule_en_cours][1] + liste_vehicules_aide[numero_vehicule_en_cours][2]][vehicule_en_coursX+1] = 0
-                liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
-                deplacements_aide.append(['la gauche',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
+            elif liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
+                if grille[vehicule_en_coursY][vehicule_en_coursX+1] == 0:       #test de la case à gauche
+                    grille[vehicule_en_coursY][vehicule_en_coursX+1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille
+                    grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = 0
+                    liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
+                    deplacements_aide.append(['la gauche',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
                        
 
 
