@@ -349,10 +349,13 @@ def aide(): #Intelligence Artificielle
             vehicule_en_coursY = voitureRy
             numero_vehicule_en_cours = grille[2][voitureRx]
             if grille[2][voitureRx+1] != 0:
-                if liste_vehicules_aide[numero_vehicule_en_cours][4] == 0:
+                if liste_vehicules_aide[numero_vehicule_en_cours][4] == 0:                 #cas du véhicule horizontal
                     vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+1]
-                else:
-                    vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] # /!\ au cas du haut/bas, là le vehicule de devant est forcément en haut
+                else:                                                                       #cas du véhicule vertical   
+                    vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
+
+
+# /!\ au cas du haut/bas, là le vehicule de devant est forcément en haut
                    # """  for voiture in liste_vehicules_aide:    #repérage de la voiture située devant la voiture rouge (qui gêne donc son avancée)
                   #  if liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == vehicule_en_coursX + 1 or liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == 3:
                    #     vehicule_devant = liste_vehicules_aide[voiture][3] #enregistrement du numéro du véhicule situé devant la voiture rouge dans une variable
@@ -383,7 +386,7 @@ def aide(): #Intelligence Artificielle
                         grille[liste_vehicules_aide[vehicule_devant][1]+liste_vehicules_aide[vehicule_devant][2] - 1][vehicule_en_coursX+1] = liste_vehicules_aide[voiture][3]    #déplacement du véhicule dans la grille
                         grille[liste_vehicules_aide[vehicule_devant][1]+1][vehicule_en_coursX+1] = 0
                         deplacements_aide.append(['la droite',1,liste_vehicules_aide[vehicule_devant][3]])  #enregistrement du déplacement dans une liste
-                        
+                vehicule_en_cours = vehicule_devant        
 
                            
 ############## attention au for vehicule in machin, ça ne marche pas, il faut plutot creer un programme pour détecter la voiture de devant (deux cas, soit la voiture en question est verticale auquel cas on chercher une voiture horizontale, soit la voiture est horizontale auquel cas on cherche une voiture verticale)
