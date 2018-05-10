@@ -357,7 +357,7 @@ def aide(): #Intelligence Artificielle
                             
     #- Véhicules verticaux -#    
             if liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:     #si c'est un véhicule vertical
-            print('vehicule V')
+                print('vehicule V')
         #- Test en haut -#
                 if liste_vehicules_aide[numero_vehicule_en_cours][1] > 0 : #s'il n'est pas collé en haut 
                     if grille[vehicule_en_coursY-1][vehicule_en_coursX] == 0:            #test de la case au dessus
@@ -380,7 +380,7 @@ def aide(): #Intelligence Artificielle
 
     #- Véhicules horizontaux -#    
             elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
-            print('vehicule H')
+                print('vehicule H')
         #- Test à gauche -#
                 if liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
                     if grille[vehicule_en_coursY][vehicule_en_coursX+1] == 0:       #test de la case à gauche
