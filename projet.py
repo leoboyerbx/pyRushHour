@@ -357,7 +357,6 @@ def aide(): #Intelligence Artificielle
                             
     #- Véhicules verticaux -#    
                 if liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:     #si c'est un véhicule vertical
-                    print('vehicule V')
         #- Test en haut -#
                     if liste_vehicules_aide[numero_vehicule_en_cours][1] > 0 : #s'il n'est pas collé en haut 
                         if grille[vehicule_en_coursY-1][vehicule_en_coursX] == 0:            #test de la case au dessus
@@ -380,7 +379,6 @@ def aide(): #Intelligence Artificielle
 
     #- Véhicules horizontaux -#    
                 elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
-                    print('vehicule H')
         #- Test à gauche -#
                     if liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
                         if grille[vehicule_en_coursY][vehicule_en_coursX+1] == 0:       #test de la case à gauche
@@ -400,29 +398,10 @@ def aide(): #Intelligence Artificielle
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
 
-                 
-                print(deplacements_aide)
-            print(numero_vehicule_en_cours)
-        #aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
+        ##ICI changer la couleur du rectangle du mvt 1 en gris (un peu transparent) et en noir pour le 2eme mvt
+        aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
             print(deplacements_aide)        
                        
-
-                           
-    #    else:
-     #       print(memoire)
-    #        grille[2][voitureRx + 1] = 1    #déplacement du véhicule dans la grille
-     #       grille[2][voitureRx - 1] = 0
-    #        deplacements_aide.append(['la droite',1,1])  #enregistrement du déplacement dans une liste
-    #        print(deplacements_aide)
-    #        print(grille)
-    #        print(memoire)
-        #ici: griser le véhicule du deplcements_aide[0] et noircir le vehicule du deplacement_aide[1]
-
-#  1- boucle:
-    #on teste la voiture de devant en haut puis en bas
-    #on teste le haut plus en détails si nécessaire et on déplace les véhicules en retournant en arrière dans les tests (sinon PB avec la voiture rouge)
-    #pareil pour le bas
-    #on affiche le coup à faire pour avancer
 
 
 
