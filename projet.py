@@ -375,7 +375,7 @@ def aide(): #Intelligence Artificielle
                     liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1]+1     #déplacement du véhicule dans liste_deplacement_aide
                     deplacements_aide.append(['le bas',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
                 else:
-                    vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
+                    numero_vehicule_en_cours = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
 
     #- Véhicules horizontaux -#    
         elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
@@ -399,14 +399,7 @@ def aide(): #Intelligence Artificielle
                     numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
 
                  
-        if liste_vehicules_aide[numero_vehicule_en_cours][4] == 0:                 #cas du véhicule horizontal
-            if liste_vehicules_aide[numero_vehicule_en_cours][2] == 2:
-                vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+2]
-            else:
-                vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+3]
-        else:                                                                       #cas du véhicule vertical   
-            vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
-        numero_vehicule_en_cours = vehicule_devant
+        
         print(numero_vehicule_en_cours)
         print(vehicule_devant)
         print(deplacements_aide)
