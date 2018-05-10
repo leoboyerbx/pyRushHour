@@ -354,14 +354,7 @@ def aide(): #Intelligence Artificielle
     while grille[2][voitureRx] != 5:
         vehicule_en_coursX = liste_vehicules_aide[numero_vehicule_en_cours][0]
         vehicule_en_coursY = liste_vehicules_aide[numero_vehicule_en_cours][1]
-                
-
-
-# /!\ au cas du haut/bas, là le vehicule de devant est forcément en haut
-                   # """  for voiture in liste_vehicules_aide:    #repérage de la voiture située devant la voiture rouge (qui gêne donc son avancée)
-                  #  if liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == vehicule_en_coursX + 1 or liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == 3:
-                   #     vehicule_devant = liste_vehicules_aide[voiture][3] #enregistrement du numéro du véhicule situé devant la voiture rouge dans une variable
-                    #    print(vehicule_devant)    """            
+                            
     #- Véhicules verticaux -#    
         if liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:     #si c'est un véhicule vertical
         #- Test en haut -#
@@ -383,26 +376,23 @@ def aide(): #Intelligence Artificielle
     #- Véhicules horizontaux -#    
         elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
         #- Test à gauche -#
-            elif liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
+            if liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
                 if grille[vehicule_en_coursY][vehicule_en_coursX+1] == 0:       #test de la case à gauche
                     grille[vehicule_en_coursY][vehicule_en_coursX - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille
                     grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = 0
                     liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
                     deplacements_aide.append(['la gauche',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
-       
+                    vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+1]                          #nouveau véhicule en cours pour la prochaine boucle
         #- Test à droite -#
-            if liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6:    #s'il n'est pas collé à droite
+            elif liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6:    #s'il n'est pas collé à droite
                 if grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2]] == 0:       #test de la case à droite
                     grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille                    grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2] + 1] = 0
                     grille[vehicule_en_coursY][vehicule_en_coursX] = 0
                     liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
                     deplacements_aide.append(['la droite',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste   
-       
-        
-                       
+                    vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
 
-
-                
+                 
         if liste_vehicules_aide[numero_vehicule_en_cours][4] == 0:                 #cas du véhicule horizontal
             if liste_vehicules_aide[numero_vehicule_en_cours][2] == 2:
                 vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+2]
@@ -410,7 +400,7 @@ def aide(): #Intelligence Artificielle
                 vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+3]
         else:                                                                       #cas du véhicule vertical   
             vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
-
+        numero_vehicule_en_cours = vehicule_devant
         print(numero_vehicule_en_cours)
         print(vehicule_devant)
         print(deplacements_aide)
