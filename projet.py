@@ -26,7 +26,7 @@ from tkinter import filedialog
 from tkinter import*
 from random import*
 from math import*
-from copy import copy
+from copy import deepcopy
 
 
 ##------- Création des voitures ------#
@@ -327,9 +327,10 @@ def aide(): #Intelligence Artificielle
     deplacements_aide = []          #Création d'une liste vide où l'on va stocker les différents déplacements à faire
     print(liste_vehicules_aide)
 
-    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
-    for case in memoire:    
-        grille.append(case,)
+#    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
+#    for case in memoire:    
+#        grille.append(case,)
+    grille = deepcopy(memoire)
     print(grille)
     print(memoire)
 
