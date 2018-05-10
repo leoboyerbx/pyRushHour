@@ -403,6 +403,10 @@ def envoi_score_requete(pseudo):
 
 
 clic_objet = False  # "Drapeau" qui indique si on est en train d'agir sur une voiture
+c = 100                          # Longueur d'un côté d'une case
+n = 6                           # Nombre de cases par ligne et par colonne
+Largeur = Hauteur = n*c
+
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
 
 score = 0
