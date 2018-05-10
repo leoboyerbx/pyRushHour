@@ -327,12 +327,13 @@ def aide(): #Intelligence Artificielle
     deplacements_aide = []          #Création d'une liste vide où l'on va stocker les différents déplacements à faire
     print(liste_vehicules_aide)
 
-#    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
+    #    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
 #    for case in memoire:    
 #        grille.append(case,)
     grille = deepcopy(memoire)
     print(grille)
     print(memoire)
+
 
     #-- Localisation de la voiture rouge --#
     voitureRx = liste_vehicules[0].X + 1
