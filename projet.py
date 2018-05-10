@@ -390,7 +390,6 @@ def envoi_score_requete(pseudo):
     global nom_niveau
     data = {"pseudo":pseudo, "score":score, "niveau":nom_niveau}
     r = requests.post("http://rushhour.cf/scores.php?new_score=true", data = data)
-    print(data)
     if r.text =="ok": #Si le serveur a envoyé une réponse favorable
         retour = Label(envoi_score, text="Score envoyé avec succès.") # On informe le joueur
     else :
