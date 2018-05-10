@@ -338,8 +338,8 @@ def aide(): #Intelligence Artificielle
     vehicule_devant = 0     #cette variable devra, plus tard, contenir le numéro du vehicule situé devant le véhicule en cours
 
     #-- Localisation de la voiture rouge --#
-    voitureRx = liste_vehicules_aide[0].X + 1
-    voitureRy = liste_vehicules_aide[0].Y 
+    voitureRx = liste_vehicules_aide[0][0]
+    voitureRy = liste_vehicules_aide[0][1] 
 
     if voitureRx == 5:       #Cas où l'on a déjà gagné
         aide_texte.configure(fen, text='Vous avez déjà gagné :)')
@@ -386,8 +386,8 @@ def aide(): #Intelligence Artificielle
                     grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = 0
                     liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
                     deplacements_aide.append(['la gauche',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
-                    else:
-                        numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX+1]                          #nouveau véhicule en cours pour la prochaine boucle
+                else:
+                    numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX+1]                          #nouveau véhicule en cours pour la prochaine boucle
         #- Test à droite -#
             elif liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6:    #s'il n'est pas collé à droite
                 if grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2]] == 0:       #test de la case à droite
