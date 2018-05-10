@@ -320,7 +320,7 @@ def aide(): #Intelligence Artificielle
     global sens
     global longueur
 
-    aide_texte.configure(text="")       #Remise à zéro du champ texte d'aide
+    aide_texte.configure(text=" ")       #Remise à zéro du champ texte d'aide
 
     liste_vehicules_aide = []       #Copie de la liste des caractéristiques des véhicules
     for vehicule in liste_vehicules:
