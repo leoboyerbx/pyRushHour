@@ -325,14 +325,8 @@ def aide(): #Intelligence Artificielle
         liste_vehicules_aide.append([vehicule.X, vehicule.Y, vehicule.longueur, vehicule.valeur,vehicule.sens],)
 
     deplacements_aide = []          #Création d'une liste vide où l'on va stocker les différents déplacements à faire
-    print(liste_vehicules_aide)
 
-    #    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
-#    for case in memoire:    
-#        grille.append(case,)
-    grille = deepcopy(memoire)
-    print(grille)
-    print(memoire)
+    grille = deepcopy(memoire)      #création d'une liste identique à memoire que l'on va pouvoir modifier pour l'IA
 
     #Initialisation d'une variable
     vehicule_devant = 0     #cette variable devra, plus tard, contenir le numéro du vehicule situé devant le véhicule en cours
@@ -408,8 +402,6 @@ def aide(): #Intelligence Artificielle
                        
 
                            
-############## attention au for vehicule in machin, ça ne marche pas, il faut plutot creer un programme pour détecter la voiture de devant (deux cas, soit la voiture en question est verticale auquel cas on chercher une voiture horizontale, soit la voiture est horizontale auquel cas on cherche une voiture verticale)
-############ il faut vérifier les valeurs dans les grilles parce que quand on déplace un véhicule, ça peut changer la valeur en question
     #    else:
      #       print(memoire)
     #        grille[2][voitureRx + 1] = 1    #déplacement du véhicule dans la grille
