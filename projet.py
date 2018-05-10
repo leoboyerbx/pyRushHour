@@ -22,12 +22,11 @@
 #
 #
 ##------- Importation des modules --------##
-from math import *
-from random import *
-from tkinter import *
 from tkinter import filedialog
-import requests
-import webbrowser
+from tkinter import*
+from random import*
+from math import*
+from copy import copy
 
 
 ##------- Création des voitures ------#
@@ -145,10 +144,6 @@ def init_jeu():
     global jeu
     global memoire
     global liste_vehicules
-    global score_nmouv
-    global victoire
-    score_nmouv = 0 # On remet à zéro le nombre de mouvements
-    victoire = False # ON indique que le joureur n'a pas encore gagné
     ##------- Tableau de mémoire -------##
     memoire = []
     for ligne in range(1,7):
@@ -166,7 +161,7 @@ def init_jeu():
         n = k+1
         jeu.create_line(n*c, 0, n*c, 600)
         jeu.create_line(0, n*c, 600, n*c)
-    menu_fichier.entryconfig("Fermer le niveau", state='disabled') # Comme aucun fichier n'est encore ouvert, on grise l'option pour fermer le niveau.
+    menu_fichier.entryconfig("Fermer le niveau", state='disabled')
 
 
 def ouvrir_niveau():
@@ -215,13 +210,6 @@ def ouvrir_niveau():
                                             
                     # exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
                     Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
-                elif ligne[0:4] == "nmin":
-                    global score_nmin
-                    score_nmin = int(ligne[5::])
-                elif ligne[0:7] == "nivname":
-                    global nom_niveau
-                    nom_niveau = str(ligne[8::])
-
 
 
         ##----- Fermeture du fichier précédendemment ouvert -----##
@@ -232,126 +220,94 @@ def ouvrir_niveau():
 
 def Clic(event):
     """Gestion de l'événement clic gauche"""
+    global clic_objet   # Récupération des variables globales
+    global liste_vehicules
+    global target
     X = event.x     # Coordonnées du clic
     Y = event.y
-    if not(victoire): #Si le joueur n'a pas encore gagné
-        global clic_objet   # Récupération des variables globales
-        global liste_vehicules
-        global target
-        for vehicule in liste_vehicules:    # Permet de définir si on a cliqué ou non sur un véhicule
-            """ Pour chaque véhicule on teste si les coordonnées du clic correspondent aux coordonnées du véhicule """
-            [xmin, ymin, xmax, ymax] = jeu.coords(vehicule.rectangle)
-            xmin = int(xmin)
-            xmax = int(xmax)
-            ymin = int(ymin)
-            ymax = int(ymax)
-            if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
-                clic_objet = True   # On définit le drapeau sur true
-                target = vehicule   # On place le véhicule en question comme cible
-                target.start_move()  # On applique la méthode start_move()
-                break
-            else:
-                clic_objet = False
-    else: # Si le joueur a gagné
-        if 210 <= X <= 390 and 380 <= Y <= 440: # si il clique sur le bouton des scores
-            envoi_score_dialogue()
+    for vehicule in liste_vehicules:    # Permet de définir si on a cliqué ou non sur un véhicule
+        """ Pour chaque véhicule on teste si les coordonnées du clic correspondent aux coordonnées du véhicule """
+        [xmin, ymin, xmax, ymax] = jeu.coords(vehicule.rectangle)
+        xmin = int(xmin)
+        xmax = int(xmax)
+        ymin = int(ymin)
+        ymax = int(ymax)
+        if xmin <= X <= xmax and ymin <= Y <= ymax: # Si le clic a lieu sur le véhicule sélectionné
+            clic_objet = True   # On définit le drapeau sur true
+            target = vehicule   # On place le véhicule en question comme cible
+            target.start_move()  # On applique la méthode start_move()
+            break
+        else:
+            clic_objet = False
 
 
 def Drag(event):
     """ Gestion de l'événement glisser """
-    if not(victoire): #Si le joueur n'a pas encore gagné
-        X = event.x # Récupération des coordonnées du clic
-        Y = event.y
-        global Largeur      # Récupération des variables globales
-        global Hauteur
-        global target
+    X = event.x # Récupération des coordonnées du clic
+    Y = event.y
+    global Largeur      # Récupération des variables globales
+    global Hauteur
+    global target
 
-        if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
-            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
-            xmin = int(xmin)
-            xmax = int(xmax)
-            ymin = int(ymin)
-            ymax = int(ymax)
-            deltaX = target.largeur/2
-            deltaY = target.hauteur/2
-            [limite_gauche, limite_droite] = target.limites #On récupère les limites de déplacement de l'objet
+    if clic_objet == True:  # On n'agit que si on est en train de déplacer un objet
+        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)     # On récupère les coordonnées de la voiture
+        xmin = int(xmin)
+        xmax = int(xmax)
+        ymin = int(ymin)
+        ymax = int(ymax)
+        deltaX = target.largeur/2
+        deltaY = target.hauteur/2
+        [limite_gauche, limite_droite] = target.limites #On récupère les limites de déplacement de l'objet
 
 
-            # Empêcher l'objet de sortir de ses limites
-            if target.sens == 0: #Si horizontal
-                if X<deltaX + limite_gauche:
-                    X=deltaX + limite_gauche
-                if X>limite_droite-deltaX:
-                    X=limite_droite-deltaX
-                # déplacement de l'objet
-                jeu.coords(target.rectangle,X-deltaX,ymin,X+deltaX,ymax)
-            else:   # Si vertical
-                if Y<deltaY + limite_gauche:
-                    Y=deltaY + limite_gauche
-                if Y>limite_droite-deltaY:
-                    Y=limite_droite-deltaY
-                # déplacement de l'objet
-                jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
+        # Empêcher l'objet de sortir de ses limites
+        if target.sens == 0: #Si horizontal
+            if X<deltaX + limite_gauche:
+                X=deltaX + limite_gauche
+            if X>limite_droite-deltaX:
+                X=limite_droite-deltaX
+            # déplacement de l'objet
+            jeu.coords(target.rectangle,X-deltaX,ymin,X+deltaX,ymax)
+        else:   # Si vertical
+            if Y<deltaY + limite_gauche:
+                Y=deltaY + limite_gauche
+            if Y>limite_droite-deltaY:
+                Y=limite_droite-deltaY
+            # déplacement de l'objet
+            jeu.coords(target.rectangle,xmin,Y-deltaY,xmax,Y+deltaY)
 
 
 def Drop(event):
     """ Gestion de l'événement déposer (drop) """
-    if not(victoire): #Si le joueur n'a pas encore gagné
-        if clic_objet: #Si on est en train de déplacer un objet
-            global target   # On récupère l'objet cible et ses coordonnées
-            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
-            if target.sens == 0: # Si l'objet est horizontal
-                xG = round(xmin/c) # On arrondit au carré le plus proche
-                jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax) # On déplace l'objet (drop)
-            else: # Si l'objet est vertical, pareil mais sur Y
-                yG = round(ymin/c)
-                jeu.coords(target.rectangle, xmin, yG*c, xmax, yG*c+target.hauteur)
+    if clic_objet: #Si on est en train de déplacer un objet
+        global target   # On récupère l'objet cible et ses coordonnées
+        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle)
+        if target.sens == 0: # Si l'objet est horizontal
+            xG = round(xmin/c) # On arrondit au carré le plus proche
+            jeu.coords(target.rectangle, xG*c, ymin, xG*c+target.largeur, ymax) # On déplace l'objet (drop)
+        else: # Si l'objet est vertical, pareil mais sur Y
+            yG = round(ymin/c)
+            jeu.coords(target.rectangle, xmin, yG*c, xmax, yG*c+target.hauteur)
 
-            
-            [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
-            print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
-            target.set_coords(round(xmin/100), round(ymin/100))
-            global score_nmouv
-            score_nmouv +=1
-            update_score()
-            verif_gagnant() # On regarde si on a gagné
-
-def update_score():
-    """ Fonction qui met à jour le score en fonction du nombre de mouvements """
-    global score
-    global score_nmouv
-    global score_nmin
-    score = (100//score_nmouv)*score_nmin
-
-
-def animation_victoire():
-    """ Fonction qui anime la sortie de la voiture rouge lors de la victoire """
-    voiture = liste_vehicules[0].rectangle
-    coords = jeu.coords(voiture)
-    if coords[0] <= 600:
-        jeu.move(voiture, 5, 0)
-        jeu.after(5, animation_victoire) #On rappelle la fonction pour animer
-
+        
+        [xmin, ymin, xmax, ymax] = jeu.coords(target.rectangle) # On récupère les nouvelles coordonnées et on les stocke dans memoire
+        print("Nouvelles coordonnées de l'objet --> ", round(xmin/100), round(ymin/100))
+        target.set_coords(round(xmin/100), round(ymin/100))
+        verif_gagnant() # On regarde si on a gagné
 
 
 def verif_gagnant():
     """ Fonction qui vérifie si le joueur a gagné """
     global memoire
     if memoire[2][4] == memoire[2][5] == 1: # Si la voiture rouge se trouve sur la case en face de la sortie, on crée unje fenêtre pour dire "c'est gagné"
-        animation_victoire()
-        cache = jeu.create_rectangle(1, 1, 600, 600, width=0, fill="#ccc", stipple="gray75")
-        cadre = jeu.create_rectangle(200, 200, 400, 450, width=0, fill="#fff")
-        bouton = jeu.create_rectangle(210, 380, 390, 440, width=0, fill="#487eb0")
-        text = jeu.create_text(300,250,text="Bravo !", fill='Black',font='Arial 20')
-        text2 = jeu.create_text(300,300,text="Vous êtes sorti du bouchon !", fill='Black',font='Arial 11')
-        text3 = jeu.create_text(300,410,text="Envoyer mon score \n en ligne", fill='White',font='Arial 13')
-        global score
-        affScore = jeu.create_text(300,350,text="Score: {}".format(score), fill='Black',font='Arial 11')
-        global victoire
-        victoire = True
+        fen_victoire = Tk()
+        fen_victoire.title('Bravo !')
+        bravo = Label(fen_victoire, text="Félicitation, vous avez gagné !")
+        bravo.pack()
+        ok = Button(fen_victoire, text="OK", command = fen_victoire.quit)
+        ok.pack()
 
-def couleurAleat():
-    """ Fonction qui génère une couleur aléatoire """
+def couleurAleat(): #Fonction qui génère une couleur aléatoire
     couleurs = ["#2980b9", "#f9ca24", "#f0932b", "#8e44ad", "#2c3e50", "#f368e0", "#48dbfb"] #Liste de couleurs
     return couleurs[randint(0, len(couleurs) - 1)]  #On retourne une couleur au hasard dans la liste
 
@@ -359,50 +315,95 @@ def debugger(): #Débogage
     for i in range (6):
         print(memoire[i])
 
+def aide(): #Intelligence Artificielle
+    global memoire
+    global sens
+    global longueur
 
-def ouvrir_site(event):
-    webbrowser.open_new(r"http://www.rushhour.cf/")
+    liste_vehicules_aide = []       #Copie de la liste des caractéristiques des véhicules
+    for vehicule in liste_vehicules:
+        liste_vehicules_aide.append([vehicule.X, vehicule.Y, vehicule.longueur, vehicule.valeur,vehicule.sens],)
 
-def envoi_score_dialogue():
-    """ Fonction qui ouvre la fenêtre d'envoi du score en ligne """
-    global envoi_score
-    envoi_score = Tk() # On crée la fenêtre et on ajoute les éléments
-    envoi_score.title('Envoi du score en ligne')
-    envoi_score.geometry('400x170+400+400')
-    info = Label(envoi_score, text='Vous pouvez envoyer votre score en ligne pour vous comparer aux autres !')
-    info.pack()
-    lien = Label(envoi_score, text="www.rushhour.cf", fg="blue", cursor="hand2")
-    lien.pack()
-    lien.bind("<Button-1>", ouvrir_site)
+    deplacements_aide = []          #Création d'une liste vide où l'on va stocker les différents déplacements à faire
+    print(liste_vehicules_aide)
 
-    info2 = Label(envoi_score, text='Choisissez un pseudo :')
-    info2.pack()
+    grille = []                        #Création d'un tableau identique à mémoire que l'on peut modifier sans altérer le jeu
+    for case in memoire:    
+        grille.append(case,)
+    print(grille)
+    print(memoire)
 
-    pseudo = Entry(envoi_score)
-    pseudo.pack()
+    #-- Localisation de la voiture rouge --#
+    voitureRx = liste_vehicules[0].X + 1
+    voitureRy = liste_vehicules[0].Y 
 
-    valider = Button(envoi_score, text='Valider', command=lambda:envoi_score_requete(pseudo.get()))
-    valider.pack()
+    if voitureRx == 5:       #Cas où l'on a déjà gagné
+        aide_texte.configure(fen, text='Vous avez déjà gagné :)')
 
-    global annuler
-    annuler = Button(envoi_score, text='Annuler', command=envoi_score.destroy)
-    annuler.pack()
+    #--  Etude du véhicule gênant le véhicule à déplacer (en premier la voiture rouge, puis celle qui la gêne etc...) --#
+    else:
+        while grille[2][voitureRx] != 5:
+            vehicule_en_coursX = voitureRx
+            vehicule_en_coursY = voitureRy
+            numero_vehicule_en_cours = grille[2][voitureRx]
+            if grille[2][voitureRx+1] != 0:
+                if liste_vehicules_aide[numero_vehicule_en_cours][4] == 0:
+                    vehicule_devant = grille[vehicule_en_coursY][vehicule_en_coursX+1]
+                else:
+                    vehicule_devant = grille[vehicule_en_coursY+1][vehicule_en_coursX] # /!\ au cas du haut/bas, là le vehicule de devant est forcément en haut
+                   # """  for voiture in liste_vehicules_aide:    #repérage de la voiture située devant la voiture rouge (qui gêne donc son avancée)
+                  #  if liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == vehicule_en_coursX + 1 or liste_vehicules_aide[voiture][1] + liste_vehicules_aide[voiture][2] - 1 == 3:
+                   #     vehicule_devant = liste_vehicules_aide[voiture][3] #enregistrement du numéro du véhicule situé devant la voiture rouge dans une variable
+                    #    print(vehicule_devant)    """            
+                if liste_vehicules_aide[vehicule_devant][1] > 0 and liste_vehicules_aide[vehicule_devant][4] == 1: #s'il n'est pas collé en haut et que c'est un véhicule vertical
+                    if grille[liste_vehicules_aide[vehicule_devant][1]-1][vehicule_en_coursX+1] == 0:       #test de la case au dessus
+                        grille[liste_vehicules_aide[vehicule_devant][1]-1][vehicule_en_coursX+1] = liste_vehicules_aide[vehicule_devant][3]       #déplacement du véhicule dans la grille
+                        grille[liste_vehicules_aide[vehicule_devant][1] + longueur][vehicule_en_coursX+1] = 0
+                        deplacements_aide.append(['le haut',1,liste_vehicules_aide[vehicule_devant][3]])  #enregistrement du déplacement dans une liste
+                        
+
+                elif liste_vehicules_aide[vehicule_devant][1] + liste_vehicules_aide[vehicule_devant][2] - 1 < 5 and liste_vehicules_aide[vehicule_devant][4] == 1:    #s'il n'est pas collé en bas et qu'il est vertical
+                    if grille[liste_vehicules_aide[vehicule_devant][1]+liste_vehicules_aide[vehicule_devant][2] - 1][vehicule_en_coursX+1] == 0:       #test de la case en dessous
+                        grille[liste_vehicules_aide[vehicule_devant][1]+liste_vehicules_aide[vehicule_devant][2] - 1][vehicule_en_coursX+1] = liste_vehicules_aide[voiture][3]    #déplacement du véhicule dans la grille
+                        grille[liste_vehicules_aide[vehicule_devant][1]+1][vehicule_en_coursX+1] = 0
+                        deplacements_aide.append(['le bas',1,liste_vehicules_aide[vehicule_devant][3]])  #enregistrement du déplacement dans une liste
+                        
+
+                elif liste_vehicules_aide[vehicule_devant][0] > 0 and liste_vehicules_aide[vehicule_devant][4] == 0: #s'il n'est pas collé  gauche et que c'est un véhicule horizontal
+                    if grille[vehicule_en_coursY][liste_vehicules_aide[vehicule_devant][0]-1] == 0:       #test de la case au dessus
+                        grille[liste_vehicules_aide[vehicule_devant][1]-1][vehicule_en_coursX+1] = liste_vehicules_aide[vehicule_devant][3]       #déplacement du véhicule dans la grille
+                        grille[liste_vehicules_aide[vehicule_devant][1] + liste_vehicules_aide[vehicule_devant][2]][vehicule_en_coursX+1] = 0
+                        deplacements_aide.append(['la gauche',1,liste_vehicules_aide[vehicule_devant][3]])  #enregistrement du déplacement dans une liste
+                        
+
+                elif liste_vehicules_aide[vehicule_devant][1] + liste_vehicules_aide[vehicule_devant][2] - 1 < 5 and liste_vehicules_aide[vehicule_devant][4] == 1:    #s'il n'est pas collé en bas et qu'il est vertical
+                    if grille[liste_vehicules_aide[vehicule_devant][1]+liste_vehicules_aide[vehicule_devant][2] - 1][vehicule_en_coursX+1] == 0:       #test de la case en dessous
+                        grille[liste_vehicules_aide[vehicule_devant][1]+liste_vehicules_aide[vehicule_devant][2] - 1][vehicule_en_coursX+1] = liste_vehicules_aide[voiture][3]    #déplacement du véhicule dans la grille
+                        grille[liste_vehicules_aide[vehicule_devant][1]+1][vehicule_en_coursX+1] = 0
+                        deplacements_aide.append(['la droite',1,liste_vehicules_aide[vehicule_devant][3]])  #enregistrement du déplacement dans une liste
+                        
+
+                           
+############## attention au for vehicule in machin, ça ne marche pas, il faut plutot creer un programme pour détecter la voiture de devant (deux cas, soit la voiture en question est verticale auquel cas on chercher une voiture horizontale, soit la voiture est horizontale auquel cas on cherche une voiture verticale)
+############ il faut vérifier les valeurs dans les grilles parce que quand on déplace un véhicule, ça peut changer la valeur en question
+            else:
+                print(memoire)
+                grille[2][voitureRx + 1] = 1    #déplacement du véhicule dans la grille
+                grille[2][voitureRx - 1] = 0
+                deplacements_aide.append(['la droite',1,1])  #enregistrement du déplacement dans une liste
+                print(deplacements_aide)
+                print(grille)
+                print(memoire)
+        #ici: griser le véhicule du deplcements_aide[0] et noircir le vehicule du deplacement_aide[1]
+        aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
+
+#  1- boucle:
+    #on teste la voiture de devant en haut puis en bas
+    #on teste le haut plus en détails si nécessaire et on déplace les véhicules en retournant en arrière dans les tests (sinon PB avec la voiture rouge)
+    #pareil pour le bas
+    #on affiche le coup à faire pour avancer
 
 
-
-def envoi_score_requete(pseudo):
-    """ Fonction qui envoie le score du joueur sur le serveur """
-    global score
-    global nom_niveau
-    data = {"pseudo":pseudo, "score":score, "niveau":nom_niveau}
-    r = requests.post("http://rushhour.cf/scores.php?new_score=true", data = data)
-    print(data)
-    if r.text =="ok": #Si le serveur a envoyé une réponse favorable
-        retour = Label(envoi_score, text="Score envoyé avec succès.") # On informe le joueur
-    else :
-        retour = Label(envoi_score, text="Un erreur s'est produite")
-    retour.pack()
-    annuler.config(text="Fermer")
 
 ##------- Variables globales --------##
 
@@ -413,11 +414,7 @@ n = 6                           # Nombre de cases par ligne et par colonne
 Largeur = Hauteur = n*c
 
 liste_vehicules = []    # Liste qui contient toutes les instances de la classe Voiture
-score = 0
-score_nmin = 0 # Nombre minimal de déplacements
-score_nmouv = 0 #nombre total de mouvements
-victoire = False #Drapeau qui indique si le joueur a gagné
-nom_niveau = "Inconnu"
+
 
 ##------- Création de la fenêtre -------##
 fen = Tk()
@@ -437,16 +434,25 @@ barre_menu.add_cascade(label="Fichier", menu=menu_fichier)
 fen.config(menu=barre_menu)
 
 ##-------- Création des zones de texte ---------##
-bienvenue = Label(fen, text='Bienvenue sur RushHour, déplacez les véhicules pour faire sortir la voiture rouge !')
+bienvenue = Label(
+    fen, text='Bienvenue sur RushHour, déplacez les véhicules pour faire sortir la voiture rouge !')
 bienvenue.pack()
+aide_texte = Label(fen, text='')    #Zone de texte pour l'aide
+aide_texte.pack()
 
 ##------- Création du Canvas -------##
-jeu = Canvas(fen, width=900, height=600, bg='#fff')
+jeu = Canvas(fen, width=700, height=600, bg='#fff')
 jeu.pack()
 
 init_jeu()
 
-
+##------- Création des boutons -------##
+quitter = Button(fen, text='Quitter', command=fen.quit)
+quitter.pack()
+#debug = Button(fen, text='debug', command=debugger)
+#debug.pack()
+aide = Button(fen,text='Aide', command=aide)
+aide.pack()
 
 ##------- Programme principal -------##
 
@@ -454,5 +460,4 @@ jeu.bind('<Button-1>', Clic)  # évévement clic gauche (press)
 jeu.bind('<B1-Motion>', Drag)  # événement bouton gauche enfoncé (hold down)
 jeu.bind('<ButtonRelease-1>', Drop)
 
-fen.resizable(width=False, height=False) # on veut une fenêtre non redimensionnable
 fen.mainloop()
