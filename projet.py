@@ -213,7 +213,6 @@ def ouvrir_niveau():
                         numVoiture += 1
                         voitureValeur = numVoiture
                                             
-                    # exec("{} = Voiture({}, {}, {}, {}, '{}', {})".format(nomVoiture, voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)) # Création de la voiture: on utlise 'exec' pour avoir nu nommage de variable dynamique
                     Voiture(voitureX, voitureY, voitureLongueur, voitureSens, voitureCouleur, voitureValeur)
                 elif ligne[0:4] == "nmin":
                     global score_nmin
