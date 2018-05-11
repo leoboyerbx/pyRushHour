@@ -320,6 +320,10 @@ def aide(): #Intelligence Artificielle
     global sens
     global longueur
 
+    for vehicule in liste_vehicules:             #Recoloration aléatoire
+        jeu.itemconfigure(vehicule.rectangle, fill=couleurAleat())   
+        
+
     aide_texte.configure(text=" ")       #Remise à zéro du champ texte d'aide
 
     liste_vehicules_aide = []       #Copie de la liste des caractéristiques des véhicules
@@ -397,10 +401,12 @@ def aide(): #Intelligence Artificielle
                             deplacements_aide.append(['la droite',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste   
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
-
+        
         jeu.itemconfigure(liste_vehicules[deplacements_aide[0][2]].rectangle, fill="#ccc")
+        jeu.itemconfigure(liste_vehicules[deplacements_aide[1][2]].rectangle, fill="#000")
         aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
                        
+        
 
 
 
