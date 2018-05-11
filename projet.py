@@ -28,6 +28,7 @@ from tkinter import *
 from tkinter import filedialog
 import requests
 import webbrowser
+from copy import deepcopy
 
 
 ##------- Création des voitures ------#
@@ -397,6 +398,99 @@ def envoi_score_requete(pseudo):
     retour.pack()
     annuler.config(text="Fermer")
 
+
+def aide(): #Intelligence Artificielle
+    global memoire
+    global sens
+    global longueur
+
+    for vehicule in liste_vehicules:             #Recoloration aléatoire
+        jeu.itemconfigure(vehicule.rectangle, fill=couleurAleat())   
+        
+
+    aide_texte.configure(text=" ")       #Remise à zéro du champ texte d'aide
+
+    liste_vehicules_aide = []       #Copie de la liste des caractéristiques des véhicules
+    for vehicule in liste_vehicules:
+        liste_vehicules_aide.append([vehicule.X, vehicule.Y, vehicule.longueur, vehicule.valeur,vehicule.sens],)
+
+    deplacements_aide = []          #Création d'une liste vide où l'on va stocker les différents déplacements à faire
+
+    grille = deepcopy(memoire)      #création d'une liste identique à memoire que l'on va pouvoir modifier pour l'IA
+
+    #Initialisation d'une variable
+    vehicule_devant = 0     #cette variable devra, plus tard, contenir le numéro du vehicule situé devant le véhicule en cours
+
+    #-- Localisation de la voiture rouge --#
+    voitureRx = liste_vehicules_aide[0][0]
+    voitureRy = liste_vehicules_aide[0][1] 
+
+    if voitureRx == 5:       #Cas où l'on a déjà gagné
+        aide_texte.configure(fen, text='Vous avez déjà gagné :)')
+
+    #--  Etude du véhicule gênant le véhicule à déplacer (en premier la voiture rouge, puis celle qui la gêne, etc...) --#
+    else:
+        vehicule_en_coursX = voitureRx
+        vehicule_en_coursY = voitureRy
+        numero_vehicule_en_cours = grille[2][voitureRx]
+        if grille[2][voitureRx+2] == 0:
+                aide_texte.configure(text='Déplacez déjà la voiture rouge')
+        else:
+            while grille[2][voitureRx] != 5:
+                if grille[2][voitureRx+2] == 0:
+                    aide_texte.configure(text='Déplacez déjà la voiture rouge')
+            #else:
+                vehicule_en_coursX = liste_vehicules_aide[numero_vehicule_en_cours][0]
+                vehicule_en_coursY = liste_vehicules_aide[numero_vehicule_en_cours][1]
+                            
+    #- Véhicules verticaux -#    
+                if liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:     #si c'est un véhicule vertical
+        #- Test en haut -#
+                    if liste_vehicules_aide[numero_vehicule_en_cours][1] > 0 : #s'il n'est pas collé en haut 
+                        if grille[vehicule_en_coursY-1][vehicule_en_coursX] == 0:            #test de la case au dessus
+                            grille[vehicule_en_coursY-1][vehicule_en_coursX] = numero_vehicule_en_cours       #déplacement du véhicule dans la grille
+                            grille[vehicule_en_coursY - liste_vehicules_aide[numero_vehicule_en_cours][2]+1][vehicule_en_coursX+1] = 0
+                            liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1] - 1     #déplacement du véhicule dans liste_deplacement_aide
+                            deplacements_aide.append(['le haut',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
+                        else:
+                            numero_vehicule_en_cours = grille[vehicule_en_coursY - 1][vehicule_en_coursX] 
+
+        #- Test en bas -#
+                    elif liste_vehicules_aide[numero_vehicule_en_cours][1] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6: #s'il n'est pas collé en bas
+                        if grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] == 0:       #test de la case en dessous
+                            grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] = liste_vehicules_aide[numero_vehicule_en_cours][3]    #déplacement du véhicule dans la grille
+                            grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+2][vehicule_en_coursX+1] = 0
+                            liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1]+1     #déplacement du véhicule dans liste_deplacement_aide
+                            deplacements_aide.append(['le bas',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
+                        else:
+                            numero_vehicule_en_cours = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
+
+    #- Véhicules horizontaux -#    
+                elif liste_vehicules_aide[numero_vehicule_en_cours][4] == 1:        #s'il est horizontal
+        #- Test à gauche -#
+                    if liste_vehicules_aide[numero_vehicule_en_cours][0] > 0:         #s'il n'est pas collé à gauche
+                        if grille[vehicule_en_coursY][vehicule_en_coursX+1] == 0:       #test de la case à gauche
+                            grille[vehicule_en_coursY][vehicule_en_coursX - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille
+                            grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = 0
+                            liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
+                            deplacements_aide.append(['la gauche',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
+                        else:
+                            numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX+1]                          #nouveau véhicule en cours pour la prochaine boucle
+        #- Test à droite -#
+                    elif liste_vehicules_aide[numero_vehicule_en_cours][0] + liste_vehicules_aide[numero_vehicule_en_cours][2] < 6:    #s'il n'est pas collé à droite
+                        if grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2]] == 0:       #test de la case à droite
+                            grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille                    grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2] + 1] = 0
+                            grille[vehicule_en_coursY][vehicule_en_coursX] = 0
+                            liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
+                            deplacements_aide.append(['la droite',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste   
+                        else:
+                            numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
+        
+        jeu.itemconfigure(liste_vehicules[deplacements_aide[0][2]].rectangle, fill="#ccc")
+        jeu.itemconfigure(liste_vehicules[deplacements_aide[1][2]].rectangle, fill="#000")
+        aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
+                       
+
 ##------- Variables globales --------##
 
 
@@ -433,6 +527,8 @@ fen.config(menu=barre_menu)
 ##-------- Création des zones de texte ---------##
 bienvenue = Label(fen, text='Bienvenue sur RushHour, déplacez les véhicules pour faire sortir la voiture rouge !')
 bienvenue.pack()
+aide_texte = Label(fen, text='')    #Zone de texte pour l'aide
+aide_texte.pack()
 
 ##------- Création du Canvas -------##
 jeu = Canvas(fen, width=900, height=600, bg='#fff')
@@ -441,6 +537,9 @@ jeu.pack()
 init_jeu()
 
 
+##------- Création des boutons -------##
+aide = Button(fen,text='Aide', command=aide)
+aide.pack()
 
 ##------- Programme principal -------##
 
