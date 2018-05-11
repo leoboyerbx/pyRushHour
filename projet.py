@@ -363,7 +363,7 @@ def aide(): #Intelligence Artificielle
                             grille[vehicule_en_coursY-1][vehicule_en_coursX] = numero_vehicule_en_cours       #déplacement du véhicule dans la grille
                             grille[vehicule_en_coursY - liste_vehicules_aide[numero_vehicule_en_cours][2]+1][vehicule_en_coursX+1] = 0
                             liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1] - 1     #déplacement du véhicule dans liste_deplacement_aide
-                            deplacements_aide.append(['le haut',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
+                            deplacements_aide.append(['le haut',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY - 1][vehicule_en_coursX] 
 
@@ -373,7 +373,7 @@ def aide(): #Intelligence Artificielle
                             grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+liste_vehicules_aide[numero_vehicule_en_cours][2] - 1][vehicule_en_coursX+2] = liste_vehicules_aide[numero_vehicule_en_cours][3]    #déplacement du véhicule dans la grille
                             grille[liste_vehicules_aide[numero_vehicule_en_cours][1]+2][vehicule_en_coursX+1] = 0
                             liste_vehicules_aide[numero_vehicule_en_cours][1] = liste_vehicules_aide[numero_vehicule_en_cours][1]+1     #déplacement du véhicule dans liste_deplacement_aide
-                            deplacements_aide.append(['le bas',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
+                            deplacements_aide.append(['le bas',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY+1][vehicule_en_coursX] 
 
@@ -385,7 +385,7 @@ def aide(): #Intelligence Artificielle
                             grille[vehicule_en_coursY][vehicule_en_coursX - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille
                             grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = 0
                             liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]-1     #déplacement du véhicule dans liste_deplacement_aide
-                            deplacements_aide.append(['la gauche',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste
+                            deplacements_aide.append(['la gauche',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX+1]                          #nouveau véhicule en cours pour la prochaine boucle
         #- Test à droite -#
@@ -394,11 +394,11 @@ def aide(): #Intelligence Artificielle
                             grille[vehicule_en_coursY][vehicule_en_coursX + liste_vehicules_aide[numero_vehicule_en_cours][2] - 1] = numero_vehicule_en_cours      #déplacement du véhicule dans la grille                    grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2] + 1] = 0
                             grille[vehicule_en_coursY][vehicule_en_coursX] = 0
                             liste_vehicules_aide[numero_vehicule_en_cours][0] = liste_vehicules_aide[numero_vehicule_en_cours][0]+1     #déplacement du véhicule dans liste_deplacement_aide
-                            deplacements_aide.append(['la droite',1,liste_vehicules_aide[numero_vehicule_en_cours][3]])  #enregistrement du déplacement dans une liste   
+                            deplacements_aide.append(['la droite',1,numero_vehicule_en_cours],)  #enregistrement du déplacement dans une liste   
                         else:
                             numero_vehicule_en_cours = grille[vehicule_en_coursY][vehicule_en_coursX - liste_vehicules_aide[numero_vehicule_en_cours][2]] #nouveau véhicule en cours pour la prochaine boucle
 
-        ##ICI changer la couleur du rectangle du mvt 1 en gris (un peu transparent) et en noir pour le 2eme mvt
+        jeu.itemconfigure(liste_vehicules[deplacements_aide[0][2]].rectangle, fill="#ccc")
         aide_texte.configure(fen, text='Pour gagner, il faut déplacer le véhicule grisé de {} cases vers {}, \n puis le véhicule noirci de {} cases vers {}'.format(deplacements_aide[0][1], deplacements_aide[0][0], deplacements_aide[1][1], deplacements_aide[1][0]))
                        
 
